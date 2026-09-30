@@ -71,7 +71,7 @@ h3{margin:0 0 6px;font-size:11px;letter-spacing:1px;text-transform:uppercase;col
   <h1>🛰️ EWS <span>Longsor–Likuifaksi</span> Terintegrasi<small>Studi kasus: Palu–Sigi, Sulawesi Tengah • data simulasi (mockup)</small></h1>
   <div class="sp"></div>
   <span id="clock"></span>
-  <select id="bm"><option value="sat">Google Satelit</option><option value="hyb">Google Hybrid (satelit + label)</option><option value="road">Google Jalan</option><option value="ter">Google Terrain</option></select>
+  <select id="bm"><option value="sat">Basemap: Satelit</option><option value="dark">Basemap: Gelap</option><option value="osm">Basemap: Jalan (OSM)</option></select>
   <button class="btn go" id="demo">▶ Mode Demo</button>
 </header>
 <div id="pipe"></div>
@@ -122,8 +122,9 @@ map=L.map('map',{zoomControl:false,attributionControl:true}).setView([-0.97,119.
 L.control.zoom({position:'topright'}).addTo(map);
 }catch(e){$('#mapw').innerHTML='<p style="padding:30px">Leaflet gagal dimuat. Pastikan perangkat terhubung internet.</p>'}
 const BM={
- sat:gt('s'),hyb:gt('y'),road:gt('m'),ter:gt('p')};
-function gt(k){return L.tileLayer('https://mt{s}.google.com/vt/lyrs='+k+'&x={x}&y={y}&z={z}',{subdomains:'0123',maxZoom:20,attribution:'Map data © Google'})}
+ sat:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:18,attribution:'Tiles © Esri'}),
+ dark:L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'© OpenStreetMap © CARTO'}),
+ osm:L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'})};
 let baseCur=BM.sat.addTo(map);
 $('#bm').onchange=e=>{map.removeLayer(baseCur);baseCur=BM[e.target.value].addTo(map)};
 const G={zone:L.layerGroup().addTo(map),fault:L.layerGroup().addTo(map),sensor:L.layerGroup().addTo(map)};
