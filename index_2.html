@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EWS Longsor–Likuifaksi Terintegrasi – Palu</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<style>
+:root{--bg:#070d1c;--p:#0e1830;--p2:#132244;--bd:#22345f;--tx:#e7eefc;--mut:#8ea0c6;--cy:#22d3ee;
+--c0:#22c55e;--c1:#facc15;--c2:#fb923c;--c3:#ef4444}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font:13px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;overflow:hidden}
+header{display:flex;align-items:center;gap:14px;padding:10px 16px;background:linear-gradient(90deg,#0b1a3d,#0a1226);border-bottom:1px solid var(--bd);flex-wrap:wrap}
+header h1{font-size:16px;margin:0;letter-spacing:.3px}
+header h1 span{color:var(--cy)}
+header small{color:var(--mut);display:block;font-size:11px;font-weight:400}
+.sp{flex:1}
+.btn,select{background:var(--p2);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:7px 12px;font-size:12px;cursor:pointer}
+.btn.go{background:linear-gradient(90deg,#0891b2,#22d3ee);color:#03121a;font-weight:700;border:0}
+.btn.stop{background:#ef4444;color:#fff;border:0}
+#clock{font-variant-numeric:tabular-nums;color:var(--cy);font-weight:600}
+#pipe{display:flex;gap:6px;padding:8px 16px;background:var(--p);border-bottom:1px solid var(--bd);overflow-x:auto}
+.st{flex:1;min-width:150px;display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--bd);border-radius:10px;color:var(--mut);transition:.4s;background:var(--bg)}
+.st i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--p2);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.st b{font-size:12px;color:inherit}
+.st.on{color:#03121a;background:var(--cy);border-color:var(--cy);box-shadow:0 0 18px rgba(34,211,238,.55)}
+.st.on i{background:#03121a;color:var(--cy)}
+.st.done{color:var(--tx);border-color:var(--c0)}
+.st.done i{background:var(--c0);color:#03121a}
+.main{flex:1;display:grid;grid-template-columns:250px 1fr 310px;min-height:0}
+aside{background:var(--p);padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+aside.l{border-right:1px solid var(--bd)}aside.r{border-left:1px solid var(--bd)}
+h3{margin:0 0 6px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mut)}
+.card{background:var(--p2);border:1px solid var(--bd);border-radius:12px;padding:10px}
+.zc{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;transition:.2s}
+.zc:hover,.zc.sel{border-color:var(--cy);box-shadow:0 0 0 1px var(--cy) inset}
+.zc small{color:var(--mut)}
+.badge{padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700;color:#0a0a0a}
+.kp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kp div{background:var(--p2);border:1px solid var(--bd);border-radius:10px;padding:8px}
+.kp b{font-size:19px;display:block;color:var(--cy)}
+.kp span{color:var(--mut);font-size:11px}
+#mapw{position:relative;min-width:0}
+#map{position:absolute;inset:0;background:#0a1226}
+.lay{position:absolute;z-index:500;left:12px;bottom:12px;background:rgba(7,13,28,.88);border:1px solid var(--bd);border-radius:10px;padding:8px 10px;backdrop-filter:blur(6px)}
+.lay label{display:block;cursor:pointer;margin:2px 0}
+.leg{position:absolute;z-index:500;right:12px;bottom:12px;background:rgba(7,13,28,.88);border:1px solid var(--bd);border-radius:10px;padding:8px 10px;font-size:11px}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.pin{position:relative;width:22px;height:22px}
+.pin i{position:absolute;inset:4px;border-radius:50%;background:var(--c);border:2px solid #fff;box-shadow:0 0 10px var(--c)}
+.pin::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--c);animation:pl 1.8s infinite}
+@keyframes pl{0%{transform:scale(.6);opacity:1}100%{transform:scale(2.6);opacity:0}}
+.pn{background:rgba(7,13,28,.85);color:#fff;border:1px solid var(--bd);border-radius:6px;padding:2px 6px;font-weight:700;font-size:11px}
+.sen{width:9px;height:9px;background:var(--cy);border:1px solid #fff;transform:rotate(45deg)}
+.sen.g{background:#a78bfa}.sen.h{background:#60a5fa;border-radius:50%}
+.leaflet-container{font:inherit}
+#log{max-height:170px;overflow-y:auto;font-size:11.5px}
+#log div{padding:4px 0;border-bottom:1px dashed var(--bd)}
+#log time{color:var(--mut);margin-right:6px}
+.phone{border:5px solid #000;border-radius:22px;padding:10px;background:#0a1226}
+.msg{margin-top:6px;padding:8px;border-radius:8px;background:var(--p2);border-left:4px solid var(--cy);font-size:12px}
+#ov{position:fixed;inset:0;z-index:2000;pointer-events:none;display:none;box-shadow:inset 0 0 120px 30px rgba(239,68,68,.75);animation:fl 1s infinite}
+#ovt{position:fixed;top:120px;left:50%;transform:translateX(-50%);z-index:2001;background:#ef4444;color:#fff;font-weight:800;font-size:18px;padding:12px 26px;border-radius:12px;display:none;box-shadow:0 8px 30px rgba(0,0,0,.5);text-align:center}
+@keyframes fl{50%{opacity:.35}}
+@media(max-width:1000px){body{overflow:auto}.main{grid-template-columns:1fr;grid-auto-rows:auto}#mapw{height:60vh}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🛰️ EWS <span>Longsor–Likuifaksi</span> Terintegrasi<small>Studi kasus: Palu–Sigi, Sulawesi Tengah • data simulasi (mockup)</small></h1>
+  <div class="sp"></div>
+  <span id="clock"></span>
+  <select id="bm"><option value="sat">Google Satelit</option><option value="hyb">Google Hybrid (satelit + label)</option><option value="road">Google Jalan</option><option value="ter">Google Terrain</option></select>
+  <button class="btn go" id="demo">▶ Mode Demo</button>
+</header>
+<div id="pipe"></div>
+<div class="main">
+  <aside class="l">
+    <div><h3>Zona dipantau</h3><div id="zl" style="display:flex;flex-direction:column;gap:8px"></div></div>
+    <div><h3>Ringkasan</h3><div class="kp">
+      <div><b id="k1">—</b><span>Deformasi maks. (mm)</span></div>
+      <div><b id="k2">—</b><span>Sensor online</span></div>
+      <div><b>68</b><span>Hujan 24 jam (mm)</span></div>
+      <div><b id="k3">—</b><span>Zona siaga/awas</span></div></div></div>
+  </aside>
+  <div id="mapw">
+    <div id="map"></div>
+    <div class="lay"><h3>Layer</h3>
+      <label><input type="checkbox" data-l="zone" checked> Zona rawan & radius</label>
+      <label><input type="checkbox" data-l="fault" checked> Jalur Sesar Palu-Koro (skematik)</label>
+      <label><input type="checkbox" data-l="sensor" checked> Sensor (GNSS/IoT/hujan)</label></div>
+    <div class="leg"><i style="background:var(--c0)"></i>Normal <i style="background:var(--c1)"></i>Waspada <i style="background:var(--c2)"></i>Siaga <i style="background:var(--c3)"></i>Awas</div>
+  </div>
+  <aside class="r">
+    <div class="card"><h3 id="dz">Detail zona</h3><div id="dd"></div><svg id="ch" viewBox="0 0 280 120" style="width:100%;margin-top:6px"></svg></div>
+    <div class="card"><h3>Peringatan ke masyarakat</h3><div class="phone"><b>📱 SMS / WA / Aplikasi</b><div class="msg" id="msg">Belum ada peringatan.</div></div></div>
+    <div class="card"><h3>Log sistem</h3><div id="log"></div></div>
+  </aside>
+</div>
+<div id="ov"></div><div id="ovt">🚨 STATUS AWAS – EVAKUASI SEGERA<br><small id="ovs" style="font-weight:500"></small></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const LV=[['Normal','#22c55e'],['Waspada','#facc15'],['Siaga','#fb923c'],['Awas','#ef4444']];
+const MSG=['[EWS] Status NORMAL.','[EWS] WASPADA di {z}. Pantau info resmi BPBD.','[EWS] SIAGA di {z}! Siapkan tas darurat & jalur evakuasi.','[EWS] AWAS di {z}! Segera EVAKUASI ke titik kumpul terdekat.'];
+/* koordinat perkiraan, untuk ilustrasi */
+const Z=[
+{n:'Petobo',ll:[-0.9335,119.9145],l:1,def:12.4,gw:1.0,soil:'Pasir lepas jenuh air',r:1400},
+{n:'Balaroa',ll:[-0.9010,119.8500],l:0,def:7.9,gw:1.7,soil:'Pasir–lanau',r:1100},
+{n:'Jono Oge',ll:[-0.9900,119.9230],l:1,def:16.8,gw:0.8,soil:'Aluvial jenuh, area irigasi',r:1800},
+{n:'Sibalaya',ll:[-1.0700,119.9300],l:0,def:2.3,gw:3.1,soil:'Lereng relatif padat',r:1500}];
+Z.forEach((z,i)=>{z.i=i;z.s=Array.from({length:12},(_,k)=>+(z.def*Math.pow((k+1)/12,1.7)).toFixed(1));z.o=[z.l,z.def]});
+const FAULT=[[-0.72,119.86],[-0.82,119.86],[-0.90,119.87],[-0.96,119.89],[-1.03,119.91],[-1.10,119.93],[-1.20,119.95]];
+let cur=0,demoOn=false,timers=[];
+
+/* peta */
+let map;
+try{
+map=L.map('map',{zoomControl:false,attributionControl:true}).setView([-0.97,119.89],11);
+L.control.zoom({position:'topright'}).addTo(map);
+}catch(e){$('#mapw').innerHTML='<p style="padding:30px">Leaflet gagal dimuat. Pastikan perangkat terhubung internet.</p>'}
+const BM={
+ sat:gt('s'),hyb:gt('y'),road:gt('m'),ter:gt('p')};
+function gt(k){return L.tileLayer('https://mt{s}.google.com/vt/lyrs='+k+'&x={x}&y={y}&z={z}',{subdomains:'0123',maxZoom:20,attribution:'Map data © Google'})}
+let baseCur=BM.sat.addTo(map);
+$('#bm').onchange=e=>{map.removeLayer(baseCur);baseCur=BM[e.target.value].addTo(map)};
+const G={zone:L.layerGroup().addTo(map),fault:L.layerGroup().addTo(map),sensor:L.layerGroup().addTo(map)};
+document.querySelectorAll('[data-l]').forEach(c=>c.onchange=()=>c.checked?map.addLayer(G[c.dataset.l]):map.removeLayer(G[c.dataset.l]));
+L.polyline(FAULT,{color:'#ef4444',weight:3,dashArray:'8 8',opacity:.9}).addTo(G.fault).bindTooltip('Jalur Sesar Palu-Koro (skematik)',{sticky:true});
+Z.forEach(z=>{
+ z.circle=L.circle(z.ll,{radius:z.r,weight:2,fillOpacity:.22}).addTo(G.zone);
+ z.mk=L.marker(z.ll,{icon:pin(z)}).addTo(G.zone).on('click',()=>sel(z.i));
+ z.mk.bindTooltip(z.n,{permanent:true,direction:'right',offset:[10,0],className:'pn'});
+ [['g',.006,-.005],['s',-.005,.007],['h',.004,.009]].forEach(([t,a,b])=>L.marker([z.ll[0]+a,z.ll[1]+b],{icon:L.divIcon({className:'',html:`<div class="sen ${t}"></div>`,iconSize:[9,9]})}).addTo(G.sensor).bindTooltip({g:'GNSS CORS',s:'Sensor IoT muka air tanah',h:'Stasiun hujan'}[t]+' – '+z.n));
+});
+function pin(z){return L.divIcon({className:'',html:`<div class="pin" style="--c:${LV[z.l][1]}"><i></i></div>`,iconSize:[22,22],iconAnchor:[11,11]})}
+
+/* UI */
+function paint(){
+ Z.forEach(z=>{z.circle.setStyle({color:LV[z.l][1],fillColor:LV[z.l][1]});z.mk.setIcon(pin(z))});
+ $('#zl').innerHTML=Z.map(z=>`<div class="card zc ${z.i==cur?'sel':''}" onclick="sel(${z.i})"><div><b>${z.n}</b><br><small>${z.def.toFixed(1)} mm • MAT ${z.gw} m</small></div><span class="badge" style="background:${LV[z.l][1]}">${LV[z.l][0]}</span></div>`).join('');
+ $('#k1').textContent=Math.max(...Z.map(z=>z.def)).toFixed(1);
+ $('#k3').textContent=Z.filter(z=>z.l>=2).length;
+ detail();chart()}
+function detail(){const z=Z[cur];$('#dz').textContent='Detail zona • '+z.n;
+ $('#dd').innerHTML=`<span class="badge" style="background:${LV[z.l][1]}">${LV[z.l][0]}</span><table style="width:100%;margin-top:6px;border-collapse:collapse">
+ <tr><td style="color:var(--mut)">Deformasi InSAR</td><td align=right><b>${z.def.toFixed(1)} mm</b></td></tr>
+ <tr><td style="color:var(--mut)">Muka air tanah</td><td align=right><b>${z.gw} m</b></td></tr>
+ <tr><td style="color:var(--mut)">Jenis tanah</td><td align=right><b>${z.soil}</b></td></tr></table>`}
+function chart(){const z=Z[cur],mx=32,n=z.s.length,X=i=>14+i*(256/(n-1)),Y=v=>104-Math.min(v,mx)/mx*92;
+ const th=(v,c,t)=>`<line x1="14" x2="270" y1="${Y(v)}" y2="${Y(v)}" stroke="${c}" stroke-dasharray="4"/><text x="16" y="${Y(v)-3}" font-size="8" fill="${c}">${t} ${v} mm</text>`;
+ $('#ch').innerHTML=`<line x1="14" x2="270" y1="104" y2="104" stroke="#22345f"/>${th(10,'#facc15','Waspada')}${th(15,'#fb923c','Siaga')}${th(22,'#ef4444','Awas')}
+ <polyline fill="none" stroke="#22d3ee" stroke-width="2.5" points="${z.s.map((v,i)=>X(i)+','+Y(v)).join(' ')}"/><circle cx="${X(n-1)}" cy="${Y(z.s[n-1])}" r="3.5" fill="#22d3ee"/><text x="14" y="117" font-size="8" fill="#8ea0c6">Time series deformasi (live)</text>`}
+function sel(i){cur=i;paint();map.flyTo(Z[i].ll,13,{duration:1.2})}
+function log(t,c){const d=document.createElement('div');d.innerHTML=`<time>${new Date().toLocaleTimeString('id-ID')}</time><span style="color:${c||'inherit'}">${t}</span>`;$('#log').prepend(d);if($('#log').children.length>40)$('#log').lastChild.remove()}
+const S=['Akuisisi Data','Integrasi Data','Pengolahan & Analisis','Diseminasi & Keputusan','Tindak Lanjut'];
+function pipe(a){$('#pipe').innerHTML=S.map((s,i)=>`<div class="st ${i==a?'on':i<a?'done':''}"><i>${i<a?'✓':i+1}</i><b>${s}</b></div>`).join('')}
+setInterval(()=>{$('#clock').textContent=new Date().toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'medium'})},1000);
+
+/* data live */
+let on=6;
+setInterval(()=>{ if(demoOn)return;
+ Z.forEach(z=>{z.def=Math.max(0.5,z.def+(Math.random()-.5)*.4);z.s.push(+z.def.toFixed(1));z.s.shift()});
+ on=5+Math.round(Math.random());$('#k2').textContent=on+'/6';paint()},3000);
+const feed=['GNSS CORS: baseline stabil','Sentinel-1: akuisisi baru diproses','IoT MAT: pembacaan diterima','Curah hujan: data 10 menit masuk'];
+setInterval(()=>{if(!demoOn)log(feed[Math.floor(Math.random()*4)]+' – '+Z[Math.floor(Math.random()*4)].n,'#8ea0c6')},4500);
+
+/* demo */
+function setL(i,l,d){const z=Z[i];z.l=l;if(d){z.def=d;z.s.push(d);z.s.shift()}}
+function after(ms,f){timers.push(setTimeout(f,ms))}
+function reset(){timers.forEach(clearTimeout);timers=[];demoOn=false;$('#ov').style.display=$('#ovt').style.display='none';
+ Z.forEach(z=>{z.l=z.o[0];z.def=z.o[1];z.s=Array.from({length:12},(_,k)=>+(z.def*Math.pow((k+1)/12,1.7)).toFixed(1))});
+ $('#msg').textContent='Belum ada peringatan.';$('#msg').style.borderColor='#22d3ee';pipe(-1);
+ $('#demo').textContent='▶ Mode Demo';$('#demo').className='btn go';paint()}
+$('#demo').onclick=()=>{
+ if(demoOn){reset();return}
+ reset();demoOn=true;$('#demo').textContent='■ Hentikan & Reset';$('#demo').className='btn stop';
+ sel(0);pipe(0);log('<b>Akuisisi:</b> Sentinel-1 (InSAR), GNSS realtime, IoT muka air tanah, hujan & debit irigasi diterima','#22d3ee');
+ after(3500,()=>{pipe(1);log('<b>Integrasi:</b> GNSS via Jaringan CORS BIG/ATR BPN; data lain ke Pusat Data Terpadu (cloud)','#22d3ee')});
+ after(7000,()=>{pipe(2);setL(0,2,16.2);paint();log('<b>Analisis:</b> InSAR time series & baseline GNSS – anomali di Petobo, muka air tanah dangkal','#fb923c')});
+ after(10500,()=>{setL(0,3,24.6);setL(2,2,18.1);paint();log('<b>Algoritma anomali:</b> ambang displacement Petobo TERLAMPAUI','#ef4444')});
+ after(13000,()=>{pipe(3);paint();$('#ov').style.display='block';$('#ovs').textContent='Petobo • Dashboard EWS memicu peringatan dini';$('#ovt').style.display='block';
+  $('#msg').textContent=MSG[3].replace('{z}','Petobo');$('#msg').style.borderColor='#ef4444';
+  log('<b>Diseminasi:</b> sirine, SMS/WA blast, dan aplikasi dikirim ke warga & BPBD','#ef4444')});
+ after(18000,()=>{pipe(4);$('#ov').style.display=$('#ovt').style.display='none';
+  log('<b>Tindak lanjut:</b> evakuasi warga, evaluasi zonasi rawan bencana & kebijakan jaringan irigasi','#22c55e');
+  after(3500,()=>{pipe(5);log('Simulasi selesai. Tekan "Hentikan & Reset" untuk mengulang.','#8ea0c6')})})};
+pipe(-1);paint();log('Sistem siap. Klik zona atau tekan Mode Demo.','#22d3ee');
+</script>
+</body>
+</html>

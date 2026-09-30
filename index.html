@@ -2,192 +2,895 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EWS Longsor–Likuifaksi Terintegrasi – Palu</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EWS SULTENG — Prototipe Akademik</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#070d1c;--p:#0e1830;--p2:#132244;--bd:#22345f;--tx:#e7eefc;--mut:#8ea0c6;--cy:#22d3ee;
---c0:#22c55e;--c1:#facc15;--c2:#fb923c;--c3:#ef4444}
+:root{--bg:#eef4fb;--card:#fff;--ink:#0f1f3a;--mut:#5b6a82;--line:#dbe4f0;--blue:#1d5fd1;--blue-s:#e8f0fd;--red:#d92d20;--red-s:#fdecea;--org:#d97400;--org-s:#fff1de;--grn:#178a4c;--grn-s:#e3f5ea;--pur:#6b3fc0;--pur-s:#efe9fb;--teal:#0e7f89;--teal-s:#dff4f5;--navy:#0b1f45;--shadow:0 1px 2px rgba(15,31,58,.06),0 4px 14px rgba(15,31,58,.06);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1424;--card:#131f34;--ink:#e6edf7;--mut:#93a3bd;--line:#243450;--blue:#5b94f0;--blue-s:#182a4c;--red:#ff6b5e;--red-s:#3a1a1a;--org:#ffa53a;--org-s:#3a2a12;--grn:#3fc67e;--grn-s:#12301f;--pur:#a98bf0;--pur-s:#261d45;--teal:#45c4cf;--teal-s:#12303a;--shadow:0 1px 2px rgba(0,0,0,.3)}}
+:root[data-theme="dark"]{--bg:#0b1424;--card:#131f34;--ink:#e6edf7;--mut:#93a3bd;--line:#243450;--blue:#5b94f0;--blue-s:#182a4c;--red:#ff6b5e;--red-s:#3a1a1a;--org:#ffa53a;--org-s:#3a2a12;--grn:#3fc67e;--grn-s:#12301f;--pur:#a98bf0;--pur-s:#261d45;--teal:#45c4cf;--teal-s:#12303a;--shadow:0 1px 2px rgba(0,0,0,.3)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
-html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--tx);font:13px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;overflow:hidden}
-header{display:flex;align-items:center;gap:14px;padding:10px 16px;background:linear-gradient(90deg,#0b1a3d,#0a1226);border-bottom:1px solid var(--bd);flex-wrap:wrap}
-header h1{font-size:16px;margin:0;letter-spacing:.3px}
-header h1 span{color:var(--cy)}
-header small{color:var(--mut);display:block;font-size:11px;font-weight:400}
+[hidden]{display:none!important}
+body{margin:0;font:14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+a{color:var(--blue)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.ic{flex:none;vertical-align:middle}
+.app{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}
+.side{background:var(--navy);color:#cfdcf5;position:sticky;top:0;height:100vh;overflow:auto;display:flex;flex-direction:column;padding:18px 12px}
+.brand{display:flex;gap:10px;align-items:center;padding:4px 8px 18px;color:#fff;font-weight:700;letter-spacing:.02em}
+.brand small{display:block;font-weight:400;font-size:11px;color:#9fb3d9;letter-spacing:0}
+.nav a{display:flex;gap:12px;align-items:center;padding:11px 14px;border-radius:10px;color:#cfdcf5;text-decoration:none;font-weight:500;cursor:pointer;margin-bottom:2px}
+.nav a:hover{background:rgba(255,255,255,.07)}
+.nav a.on{background:#1d5fd1;color:#fff}
+.nav hr{border:0;border-top:1px solid rgba(255,255,255,.12);margin:10px 6px}
+.sysbox{margin-top:auto;border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:12px;font-size:12px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#34d27b;margin-right:6px}
+.main{padding:0 22px 28px;min-width:0}
+.top{display:flex;align-items:center;gap:14px;padding:16px 0;flex-wrap:wrap}
+.top h1{margin:0;font-size:26px;letter-spacing:-.01em}
+.top .sub{font-size:13px;color:var(--mut);max-width:520px}
+.logo{width:46px;height:46px;border-radius:12px;background:#f5a300;color:#fff;display:grid;place-items:center}
 .sp{flex:1}
-.btn,select{background:var(--p2);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:7px 12px;font-size:12px;cursor:pointer}
-.btn.go{background:linear-gradient(90deg,#0891b2,#22d3ee);color:#03121a;font-weight:700;border:0}
-.btn.stop{background:#ef4444;color:#fff;border:0}
-#clock{font-variant-numeric:tabular-nums;color:var(--cy);font-weight:600}
-#pipe{display:flex;gap:6px;padding:8px 16px;background:var(--p);border-bottom:1px solid var(--bd);overflow-x:auto}
-.st{flex:1;min-width:150px;display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--bd);border-radius:10px;color:var(--mut);transition:.4s;background:var(--bg)}
-.st i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--p2);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
-.st b{font-size:12px;color:inherit}
-.st.on{color:#03121a;background:var(--cy);border-color:var(--cy);box-shadow:0 0 18px rgba(34,211,238,.55)}
-.st.on i{background:#03121a;color:var(--cy)}
-.st.done{color:var(--tx);border-color:var(--c0)}
-.st.done i{background:var(--c0);color:#03121a}
-.main{flex:1;display:grid;grid-template-columns:250px 1fr 310px;min-height:0}
-aside{background:var(--p);padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
-aside.l{border-right:1px solid var(--bd)}aside.r{border-left:1px solid var(--bd)}
-h3{margin:0 0 6px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mut)}
-.card{background:var(--p2);border:1px solid var(--bd);border-radius:12px;padding:10px}
-.zc{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;transition:.2s}
-.zc:hover,.zc.sel{border-color:var(--cy);box-shadow:0 0 0 1px var(--cy) inset}
-.zc small{color:var(--mut)}
-.badge{padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700;color:#0a0a0a}
-.kp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.kp div{background:var(--p2);border:1px solid var(--bd);border-radius:10px;padding:8px}
-.kp b{font-size:19px;display:block;color:var(--cy)}
-.kp span{color:var(--mut);font-size:11px}
-#mapw{position:relative;min-width:0}
-#map{position:absolute;inset:0;background:#0a1226}
-.lay{position:absolute;z-index:500;left:12px;bottom:12px;background:rgba(7,13,28,.88);border:1px solid var(--bd);border-radius:10px;padding:8px 10px;backdrop-filter:blur(6px)}
-.lay label{display:block;cursor:pointer;margin:2px 0}
-.leg{position:absolute;z-index:500;right:12px;bottom:12px;background:rgba(7,13,28,.88);border:1px solid var(--bd);border-radius:10px;padding:8px 10px;font-size:11px}
-.leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
-.pin{position:relative;width:22px;height:22px}
-.pin i{position:absolute;inset:4px;border-radius:50%;background:var(--c);border:2px solid #fff;box-shadow:0 0 10px var(--c)}
-.pin::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--c);animation:pl 1.8s infinite}
-@keyframes pl{0%{transform:scale(.6);opacity:1}100%{transform:scale(2.6);opacity:0}}
-.pn{background:rgba(7,13,28,.85);color:#fff;border:1px solid var(--bd);border-radius:6px;padding:2px 6px;font-weight:700;font-size:11px}
-.sen{width:9px;height:9px;background:var(--cy);border:1px solid #fff;transform:rotate(45deg)}
-.sen.g{background:#a78bfa}.sen.h{background:#60a5fa;border-radius:50%}
-.leaflet-container{font:inherit}
-#log{max-height:170px;overflow-y:auto;font-size:11.5px}
-#log div{padding:4px 0;border-bottom:1px dashed var(--bd)}
-#log time{color:var(--mut);margin-right:6px}
-.phone{border:5px solid #000;border-radius:22px;padding:10px;background:#0a1226}
-.msg{margin-top:6px;padding:8px;border-radius:8px;background:var(--p2);border-left:4px solid var(--cy);font-size:12px}
-#ov{position:fixed;inset:0;z-index:2000;pointer-events:none;display:none;box-shadow:inset 0 0 120px 30px rgba(239,68,68,.75);animation:fl 1s infinite}
-#ovt{position:fixed;top:120px;left:50%;transform:translateX(-50%);z-index:2001;background:#ef4444;color:#fff;font-weight:800;font-size:18px;padding:12px 26px;border-radius:12px;display:none;box-shadow:0 8px 30px rgba(0,0,0,.5);text-align:center}
-@keyframes fl{50%{opacity:.35}}
-@media(max-width:1000px){body{overflow:auto}.main{grid-template-columns:1fr;grid-auto-rows:auto}#mapw{height:60vh}}
+.search{position:relative}
+.search input{width:260px;max-width:100%;padding:9px 12px 9px 36px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.search .ic{position:absolute;left:12px;top:10px;color:var(--mut)}
+.sres{position:absolute;top:42px;left:0;right:0;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);z-index:40;overflow:hidden}
+.sres button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 12px}
+.sres button:hover{background:var(--blue-s)}
+.ibtn{position:relative;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--card);display:grid;place-items:center}
+.cnt{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;border-radius:999px;font-size:10px;min-width:17px;height:17px;display:grid;place-items:center;padding:0 4px}
+.btn{display:inline-flex;gap:6px;align-items:center;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:600}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff}
+.btn.sm{padding:5px 10px;font-size:12px;border-radius:8px}
+.btn:hover{filter:brightness(.96)}
+.modechip{border-radius:999px;padding:7px 12px;font-weight:700;font-size:12px;border:1px solid var(--line);background:var(--card)}
+.modechip.rp{background:var(--pur-s);color:var(--pur);border-color:transparent}
+.modechip.lv{background:var(--grn-s);color:var(--grn);border-color:transparent}
+.prof{display:flex;gap:8px;align-items:center;font-size:12px}
+.av{width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.ch{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ch h3{margin:0;font-size:15px;display:flex;gap:8px;align-items:center}
+.pad{padding:14px 16px}
+h2.pt{margin:6px 0 4px;font-size:22px}
+.lead{color:var(--mut);margin:0 0 14px}
+.bd{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.03em;padding:2px 6px;border-radius:5px;white-space:nowrap;vertical-align:middle}
+.bd.off{background:var(--grn-s);color:var(--grn)}.bd.rt{background:var(--blue-s);color:var(--blue)}.bd.sim{background:var(--org-s);color:var(--org)}.bd.rec{background:var(--pur-s);color:var(--pur)}.bd.doc{background:var(--teal-s);color:var(--teal)}
+.chip{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px}
+.lv-red{background:var(--red-s);color:var(--red)}.lv-org{background:var(--org-s);color:var(--org)}.lv-grn{background:var(--grn-s);color:var(--grn)}.lv-blu{background:var(--blue-s);color:var(--blue)}.lv-gry{background:var(--line);color:var(--mut)}
+.banner{display:flex;gap:16px;align-items:center;padding:14px 18px;border-radius:14px;border:1px solid;margin-bottom:14px;flex-wrap:wrap}
+.banner.red{background:var(--red-s);border-color:#f3b4ae}
+.banner.ok{background:var(--grn-s);border-color:#a8dcc0}
+.banner .bi{width:54px;height:54px;border-radius:12px;display:grid;place-items:center;color:#fff;flex:none}
+.banner.red .bi{background:var(--red)}.banner.ok .bi{background:var(--grn)}
+.banner h2{margin:2px 0;font-size:22px;letter-spacing:-.01em}
+.banner.red h2{color:var(--red)}.banner.ok h2{color:var(--grn)}
+.meta{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin-top:6px}
+.meta b{color:var(--ink)}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.hz{padding:14px;display:flex;gap:12px}
+.hz .hi{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;flex:none}
+.hz h4{margin:0;font-size:13px;color:var(--mut);font-weight:600}
+.hz .big{font-size:26px;font-weight:700;line-height:1.15;margin:2px 0}
+.hz dl{margin:6px 0 0;font-size:12px;display:grid;grid-template-columns:auto 1fr;gap:2px 10px}
+.hz dt{color:var(--mut)}.hz dd{margin:0}
+.home-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:14px;align-items:start}
+.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.map{position:relative;background:#0f2a52;overflow:hidden;touch-action:none;border-radius:0 0 14px 14px}
+.map svg{width:100%;height:100%;display:block;cursor:grab}
+.mctrl{position:absolute;left:10px;top:10px;display:flex;flex-direction:column;gap:6px}
+.mctrl button{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center}
+.legend{position:absolute;left:10px;bottom:10px;background:rgba(9,22,48,.88);color:#e6edf7;border-radius:10px;padding:8px 10px;font-size:11px;max-width:230px;max-height:55%;overflow:auto}
+.legend div{display:flex;align-items:center;gap:7px;margin:2px 0}
+.legend i{width:14px;height:10px;border-radius:3px;display:inline-block;flex:none}
+.pop{position:absolute;right:10px;top:10px;width:270px;max-width:calc(100% - 20px);background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.25);padding:12px;font-size:12px;z-index:5}
+.pop h5{margin:0 0 6px;font-size:14px}
+.pop dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0}
+.pop dt{color:var(--mut)}.pop dd{margin:0}
+.lmenu{position:absolute;right:10px;top:10px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px;z-index:6;box-shadow:0 8px 24px rgba(0,0,0,.25);font-size:12px;max-height:90%;overflow:auto}
+.lmenu label{display:flex;gap:8px;align-items:center;padding:3px 0;cursor:pointer}
+.mnote{padding:8px 14px;font-size:11px;color:var(--mut)}
+.wcard{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);align-items:center}
+.wcard:last-child{border-bottom:0}
+.wcard .wi{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;flex:none}
+.wcard h5{margin:0;font-size:14px}
+.wcard small{color:var(--mut);display:block}
+.empty{padding:26px 16px;text-align:center;color:var(--mut)}
+.err{padding:16px;color:var(--red);background:var(--red-s);border-radius:10px;margin:12px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tabs button{border:1px solid var(--line);background:var(--card);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600}
+.tabs button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.chart{position:relative}
+.chart svg{width:100%;height:auto;display:block}
+.tt{position:absolute;top:6px;transform:translateX(-50%);background:var(--ink);color:var(--card);font-size:12px;padding:6px 8px;border-radius:8px;pointer-events:none;white-space:nowrap;z-index:5}
+.cleg{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--mut);margin-top:4px}
+.cleg i{display:inline-block;width:16px;height:0;border-top:2px solid;vertical-align:middle;margin-right:5px}
+.twocol{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th,.tbl td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.tbl th{font-size:11.5px;color:var(--mut);font-weight:600;white-space:nowrap}
+.tw{overflow-x:auto}
+.rbar{display:flex;align-items:center;gap:14px;padding:12px 16px;margin-bottom:14px;flex-wrap:wrap;position:sticky;bottom:8px;z-index:20;box-shadow:0 6px 20px rgba(15,31,58,.18)}
+.rbar .ctl{display:flex;gap:6px;align-items:center}
+.tl{position:relative;flex:1;min-width:280px;height:54px}
+.tl-track{position:absolute;left:14px;right:14px;top:14px;height:4px;background:var(--line);border-radius:4px}
+.tl-fill{height:100%;background:var(--blue);border-radius:4px}
+.tick{position:absolute;top:6px;transform:translateX(-50%);background:none;border:0;padding:0;text-align:center}
+.tick i{display:block;width:16px;height:16px;border-radius:50%;background:var(--card);border:3px solid var(--line);margin:0 auto}
+.tick.on i{border-color:var(--blue)}.tick.cur i{background:var(--blue);box-shadow:0 0 0 4px var(--blue-s)}
+.tick span{font-size:11px;color:var(--mut);display:block;margin-top:3px}
+.tick.cur span{color:var(--ink);font-weight:700}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--card);padding:5px 10px;font-size:12px;font-weight:600}
+.seg button.on{background:var(--blue);color:#fff}
+.pipe{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.pn{flex:1 1 150px;min-width:140px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:12px;position:relative}
+.pn b{display:block;font-size:12.5px;margin-bottom:2px}
+.pn.on{border-color:var(--blue);background:var(--blue-s)}
+.pn.cur{border-color:var(--org);background:var(--org-s)}
+.frm{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:12px}
+.frm label{font-size:11px;color:var(--mut);display:flex;flex-direction:column;gap:3px}
+.frm select,.frm input,.num{padding:7px 9px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
+.num{width:90px}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi>div{padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.kpi b{font-size:22px;display:block}
+.kpi small{color:var(--mut)}
+.tlv{list-style:none;margin:0;padding:0}
+.tlv li{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.tlv .n{width:14px;height:14px;border-radius:50%;border:3px solid var(--line);margin-top:3px;flex:none}
+.tlv li.done .n{border-color:var(--blue)}.tlv li.cur .n{background:var(--blue);border-color:var(--blue)}
+.tlv li.fut{opacity:.5}
+.foot{margin-top:18px;font-size:11.5px;color:var(--mut);display:flex;gap:8px 16px;flex-wrap:wrap;justify-content:space-between}
+.cv{width:100%;height:auto;display:block;border-radius:10px;background:#0b1424;image-rendering:auto}
+.cvw{position:relative}
+.cvw .wm{position:absolute;left:8px;bottom:8px;background:rgba(255,241,222,.92);color:#a85a00;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px}
+.spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--blue);animation:sp 1s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+.skel{height:14px;border-radius:6px;background:var(--line);margin:8px 0}
+.modal{position:fixed;inset:0;background:rgba(6,14,30,.55);display:grid;place-items:center;z-index:100;padding:16px}
+.mbox{background:var(--card);border-radius:16px;max-width:720px;width:100%;max-height:88vh;overflow:auto;padding:18px 20px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.mbox h3{margin:0 0 10px}
+.mbox textarea{width:100%;height:280px;font:12px ui-monospace,Menlo,monospace;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px}
+.menu-btn{display:none}
+.pulse{animation:pl 2.2s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes pl{0%{opacity:.8;transform:scale(.6)}100%{opacity:0;transform:scale(1.8)}}
+@media (prefers-reduced-motion:reduce){.pulse,.spin{animation:none}}
+.pm .side,.pm .hide-pm,.pm .search,.pm .prof{display:none!important}
+.pm .app{grid-template-columns:1fr}
+.pm .main{max-width:1700px;margin:0 auto}
+.pm{font-size:16px}
+.pm .home-grid{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr)}
+.pm .hz .big{font-size:32px}
+.pm .banner h2{font-size:28px}
+.rep-only{display:block}
+@media (max-width:1150px){.home-grid,.twocol{grid-template-columns:1fr}.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:900px){
+ .app{grid-template-columns:1fr}
+ .side{position:fixed;left:0;top:0;z-index:60;width:260px;transform:translateX(-100%);transition:transform .2s}
+ .side.open{transform:none}
+ .menu-btn{display:grid}
+ .main{padding:0 12px 24px}
+ .search input{width:180px}
+}
+@media (max-width:560px){.g4{grid-template-columns:1fr}.top h1{font-size:20px}.prof span{display:none}}
+@media print{
+ .side,.top,.rbar,.hide-print,.btn{display:none!important}
+ body{background:#fff;color:#000}
+ .app{display:block}
+ .card{box-shadow:none}
+}
 </style>
 </head>
 <body>
-<header>
-  <h1>🛰️ EWS <span>Longsor–Likuifaksi</span> Terintegrasi<small>Studi kasus: Palu–Sigi, Sulawesi Tengah • data simulasi (mockup)</small></h1>
-  <div class="sp"></div>
-  <span id="clock"></span>
-  <select id="bm"><option value="sat">Google Satelit</option><option value="hyb">Google Hybrid (satelit + label)</option><option value="road">Google Jalan</option><option value="ter">Google Terrain</option></select>
-  <button class="btn go" id="demo">▶ Mode Demo</button>
-</header>
-<div id="pipe"></div>
-<div class="main">
-  <aside class="l">
-    <div><h3>Zona dipantau</h3><div id="zl" style="display:flex;flex-direction:column;gap:8px"></div></div>
-    <div><h3>Ringkasan</h3><div class="kp">
-      <div><b id="k1">—</b><span>Deformasi maks. (mm)</span></div>
-      <div><b id="k2">—</b><span>Sensor online</span></div>
-      <div><b>68</b><span>Hujan 24 jam (mm)</span></div>
-      <div><b id="k3">—</b><span>Zona siaga/awas</span></div></div></div>
-  </aside>
-  <div id="mapw">
-    <div id="map"></div>
-    <div class="lay"><h3>Layer</h3>
-      <label><input type="checkbox" data-l="zone" checked> Zona rawan & radius</label>
-      <label><input type="checkbox" data-l="fault" checked> Jalur Sesar Palu-Koro (skematik)</label>
-      <label><input type="checkbox" data-l="sensor" checked> Sensor (GNSS/IoT/hujan)</label></div>
-    <div class="leg"><i style="background:var(--c0)"></i>Normal <i style="background:var(--c1)"></i>Waspada <i style="background:var(--c2)"></i>Siaga <i style="background:var(--c3)"></i>Awas</div>
-  </div>
-  <aside class="r">
-    <div class="card"><h3 id="dz">Detail zona</h3><div id="dd"></div><svg id="ch" viewBox="0 0 280 120" style="width:100%;margin-top:6px"></svg></div>
-    <div class="card"><h3>Peringatan ke masyarakat</h3><div class="phone"><b>📱 SMS / WA / Aplikasi</b><div class="msg" id="msg">Belum ada peringatan.</div></div></div>
-    <div class="card"><h3>Log sistem</h3><div id="log"></div></div>
-  </aside>
-</div>
-<div id="ov"></div><div id="ovt">🚨 STATUS AWAS – EVAKUASI SEGERA<br><small id="ovs" style="font-weight:500"></small></div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<div id="app"></div>
+<div id="modal" class="modal" hidden></div>
 <script>
-const $=s=>document.querySelector(s);
-const LV=[['Normal','#22c55e'],['Waspada','#facc15'],['Siaga','#fb923c'],['Awas','#ef4444']];
-const MSG=['[EWS] Status NORMAL.','[EWS] WASPADA di {z}. Pantau info resmi BPBD.','[EWS] SIAGA di {z}! Siapkan tas darurat & jalur evakuasi.','[EWS] AWAS di {z}! Segera EVAKUASI ke titik kumpul terdekat.'];
-/* koordinat perkiraan, untuk ilustrasi */
-const Z=[
-{n:'Petobo',ll:[-0.9335,119.9145],l:1,def:12.4,gw:1.0,soil:'Pasir lepas jenuh air',r:1400},
-{n:'Balaroa',ll:[-0.9010,119.8500],l:0,def:7.9,gw:1.7,soil:'Pasir–lanau',r:1100},
-{n:'Jono Oge',ll:[-0.9900,119.9230],l:1,def:16.8,gw:0.8,soil:'Aluvial jenuh, area irigasi',r:1800},
-{n:'Sibalaya',ll:[-1.0700,119.9300],l:0,def:2.3,gw:3.1,soil:'Lereng relatif padat',r:1500}];
-Z.forEach((z,i)=>{z.i=i;z.s=Array.from({length:12},(_,k)=>+(z.def*Math.pow((k+1)/12,1.7)).toFixed(1));z.o=[z.l,z.def]});
-const FAULT=[[-0.72,119.86],[-0.82,119.86],[-0.90,119.87],[-0.96,119.89],[-1.03,119.91],[-1.10,119.93],[-1.20,119.95]];
-let cur=0,demoOn=false,timers=[];
+'use strict';
+/* ================= utils ================= */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const hm=min=>pad(Math.floor(min/60)%24)+':'+pad(((min%60)+60)%60);
+const hsh=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))|0;return h;};
+const rnd=x=>{const y=Math.sin(x*12.9898+78.233)*43758.5453;return y-Math.floor(y);};
 
-/* peta */
-let map;
-try{
-map=L.map('map',{zoomControl:false,attributionControl:true}).setView([-0.97,119.89],11);
-L.control.zoom({position:'topright'}).addTo(map);
-}catch(e){$('#mapw').innerHTML='<p style="padding:30px">Leaflet gagal dimuat. Pastikan perangkat terhubung internet.</p>'}
-const BM={
- sat:gt('s'),hyb:gt('y'),road:gt('m'),ter:gt('p')};
-function gt(k){return L.tileLayer('https://mt{s}.google.com/vt/lyrs='+k+'&x={x}&y={y}&z={z}',{subdomains:'0123',maxZoom:20,attribution:'Map data © Google'})}
-let baseCur=BM.sat.addTo(map);
-$('#bm').onchange=e=>{map.removeLayer(baseCur);baseCur=BM[e.target.value].addTo(map)};
-const G={zone:L.layerGroup().addTo(map),fault:L.layerGroup().addTo(map),sensor:L.layerGroup().addTo(map)};
-document.querySelectorAll('[data-l]').forEach(c=>c.onchange=()=>c.checked?map.addLayer(G[c.dataset.l]):map.removeLayer(G[c.dataset.l]));
-L.polyline(FAULT,{color:'#ef4444',weight:3,dashArray:'8 8',opacity:.9}).addTo(G.fault).bindTooltip('Jalur Sesar Palu-Koro (skematik)',{sticky:true});
-Z.forEach(z=>{
- z.circle=L.circle(z.ll,{radius:z.r,weight:2,fillOpacity:.22}).addTo(G.zone);
- z.mk=L.marker(z.ll,{icon:pin(z)}).addTo(G.zone).on('click',()=>sel(z.i));
- z.mk.bindTooltip(z.n,{permanent:true,direction:'right',offset:[10,0],className:'pn'});
- [['g',.006,-.005],['s',-.005,.007],['h',.004,.009]].forEach(([t,a,b])=>L.marker([z.ll[0]+a,z.ll[1]+b],{icon:L.divIcon({className:'',html:`<div class="sen ${t}"></div>`,iconSize:[9,9]})}).addTo(G.sensor).bindTooltip({g:'GNSS CORS',s:'Sensor IoT muka air tanah',h:'Stasiun hujan'}[t]+' – '+z.n));
+/* ================= icons ================= */
+const IC={
+home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
+map:'<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>',
+bell:'<path d="M6 9a6 6 0 1112 0c0 6 2 7 2 8H4c0-1 2-2 2-8z"/><path d="M10 21h4"/>',
+activity:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+sensor:'<circle cx="12" cy="12" r="2"/><path d="M7 7a7 7 0 000 10M17 7a7 7 0 010 10M4 4a11 11 0 000 16M20 4a11 11 0 010 16"/>',
+sat:'<path d="M4 12a8 8 0 018-8"/><path d="M8 12a4 4 0 014-4"/><circle cx="12" cy="12" r="1.5"/><path d="M13 13l7 7"/>',
+chart:'<path d="M4 20V4"/><path d="M4 20h16"/><path d="M8 16v-5M12 16V8M16 16v-8"/>',
+gov:'<path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/>',
+file:'<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>',
+gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
+replay:'<path d="M3 12a9 9 0 109-9"/><path d="M3 4v5h5"/><path d="M12 8v4l3 2"/>',
+search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',
+wave:'<path d="M2 15c3 0 3-3 6-3s3 3 6 3 3-3 6-3M2 20c3 0 3-3 6-3s3 3 6 3 3-3 6-3"/><path d="M5 9c2-4 8-6 14-4"/>',
+mtn:'<path d="M3 20l6-12 4 7 3-4 5 9z"/>',
+layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+locate:'<circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',minus:'<path d="M5 12h14"/>',
+x:'<path d="M6 6l12 12M18 6L6 18"/>',
+chev:'<path d="M9 6l6 6-6 6"/>',
+play:'<path d="M7 4l13 8-13 8z"/>',pause:'<path d="M7 4v16M17 4v16"/>',
+prev:'<path d="M19 5L9 12l10 7zM5 5v14"/>',next:'<path d="M5 5l10 7-10 7zM19 5v14"/>',
+reset:'<path d="M3 12a9 9 0 109-9"/><path d="M3 4v5h5"/>',
+pres:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 21l4-5 4 5"/>',
+menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+book:'<path d="M4 4h7a3 3 0 013 3v13a2 2 0 00-2-2H4zM20 4h-6"/>',
+pin:'<path d="M12 21s7-6 7-12a7 7 0 10-14 0c0 6 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>'
+};
+const ic=(n,s=18)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]||''}</svg>`;
+const TIPS={off:'Data dari sumber resmi (mis. USGS/BMKG/BNPB).',rt:'Data API waktu-nyata.',sim:'Data simulasi/demo — BUKAN pengamatan nyata.',rec:'Rekonstruksi output sistem historis — bukan output operasional nyata.',doc:'Fakta historis terdokumentasi (parameter perlu diverifikasi ke sumber).'};
+const BL={off:'OFFICIAL SOURCE',rt:'REAL-TIME',sim:'SIMULATED',rec:'RECONSTRUCTED',doc:'DOCUMENTED'};
+const bd=k=>`<span class="bd ${k}" title="${TIPS[k]}">${BL[k]}</span>`;
+const chip=(t,c)=>`<span class="chip ${c}">${esc(t)}</span>`;
+
+/* ================= data ================= */
+const QUAKE={id:'usgs-2018-09-28',time:'2018-09-28T10:02:45Z',lat:-0.178,lon:119.840,mag:7.5,depth:20,region:'Donggala, Sulawesi Tengah',tsunamiPotential:true,source:'USGS',sourceUrl:'https://earthquake.usgs.gov/',isSimulated:false};
+const STEPS=[
+{t:'17:00',m:-2,type:'rec',title:'KONDISI NORMAL',desc:'Sistem memantau; belum ada peringatan aktif.',gov:'Belum ada aktivitas respons.',act:'Pemantauan rutin.',note:'Kondisi awal rekonstruksi sebelum kejadian.'},
+{t:'17:02',m:0,type:'doc',title:'GEMPA TERDETEKSI',desc:'Gempa M7.5 terdeteksi. Parameter mengacu pada USGS.',gov:'Belum ada aktivitas respons.',act:'Verifikasi parameter (BMKG/USGS) dan aktifkan analisis potensi tsunami.',note:'Terdokumentasi: kejadian 28 Sep 2018 10:02:45 UTC = 17:02 WIB = 18:02 WITA (USGS). Verifikasi ke halaman event USGS sebelum dikutip.'},
+{t:'17:05',m:3,type:'rec',title:'ANALISIS POTENSI TSUNAMI',desc:'Mesin aturan menilai magnitudo & kedalaman terhadap ambang tsunami.',gov:'Koordinasi awal (rekonstruksi).',act:'Jalankan model tsunami; siapkan draf peringatan.',note:'Rekonstruksi output sistem. Bukan hasil sistem operasional.'},
+{t:'17:10',m:8,type:'rec',title:'RISIKO LIKUIFAKSI TERIDENTIFIKASI',desc:'Intensitas guncangan tinggi di zona kerentanan likuifaksi tinggi.',gov:'Koordinasi awal (rekonstruksi).',act:'Tandai zona likuifaksi untuk evakuasi dan penutupan akses.',note:'Terdokumentasi: likuifaksi/aliran tanah terjadi di Petobo, Balaroa, Jono Oge, Sibalaya. Waktu identifikasi 17:10 adalah rekonstruksi.'},
+{t:'17:15',m:13,type:'rec',title:'PERINGATAN / DISEMINASI',desc:'Peringatan disebarkan ke otoritas dan publik (skenario).',gov:'Diseminasi (rekonstruksi).',act:'Sebarkan instruksi evakuasi ke tempat tinggi; gunakan kanal resmi.',note:'Terdokumentasi (perlu verifikasi): BMKG dilaporkan menerbitkan peringatan tsunami sekitar 17:07 WIB dan mengakhirinya sekitar 17:36 WIB. Diseminasi 17:15 di prototipe adalah rekonstruksi.'},
+{t:'17:20',m:18,type:'rec',title:'EVAKUASI / RESPONS',desc:'Skenario evakuasi dan respons awal dimulai.',gov:'Respons awal (rekonstruksi; waktu aktual tidak dicantumkan tanpa sumber).',act:'Kerahkan tim SAR; buka titik kumpul.',note:'Rekonstruksi. Waktu evakuasi aktual tidak dicantumkan karena belum ada sumber.'},
+{t:'17:30',m:28,type:'rec',title:'PEMANTAUAN PASCA-KEJADIAN',desc:'Pemantauan gempa susulan, deformasi, dan curah hujan.',gov:'Respons berlanjut (rekonstruksi).',act:'Pantau gempa susulan dan kestabilan lereng.',note:'Rekonstruksi.'},
+{t:'18:00',m:58,type:'rec',title:'PEMANTAUAN LANJUTAN',desc:'Evaluasi awal dampak; pembaruan data sensor simulasi.',gov:'Respons berlanjut (rekonstruksi).',act:'Perbarui peta dampak; jadwalkan akuisisi citra satelit.',note:'Rekonstruksi.'},
+{t:'20:00',m:178,type:'rec',title:'RINGKASAN MALAM HARI',desc:'Ringkasan status pada pukul 20:00 WIB.',gov:'Lihat halaman Evaluasi (bukti perlu diverifikasi).',act:'Susun laporan situasi; rencanakan tahap pemulihan.',note:'Rekonstruksi. Rincian respons pemerintah ada di halaman Evaluasi.'}
+];
+const WARN=[
+{id:'W-EQ',hz:'Gempa',icon:'activity',color:'#d92d20',sev:'TINGGI',loc:'Donggala – Palu, Sulawesi Tengah',from:1,msg:'Gempa M7.5 (USGS). Waspadai gempa susulan.',src:'USGS + mesin aturan (rekonstruksi)'},
+{id:'W-TS',hz:'Tsunami',icon:'wave',color:'#1d5fd1',sev:'SANGAT TINGGI',loc:'Pesisir Teluk Palu dan Donggala',from:2,msg:'Potensi tsunami di pesisir Teluk Palu dan sekitarnya.',src:'Mesin aturan (rekonstruksi)'},
+{id:'W-LQ',hz:'Likuifaksi',icon:'layers',color:'#d97400',sev:'TINGGI',loc:'Palu, Sigi (Petobo, Balaroa, Jono Oge, Sibalaya)',from:3,msg:'Risiko likuifaksi di zona kerentanan tinggi.',src:'Mesin aturan (rekonstruksi)'},
+{id:'W-LS',hz:'Longsor',icon:'mtn',color:'#8a5a2b',sev:'WASPADA',loc:'Lereng sekitar Palu–Sigi (demo)',from:6,msg:'Pemantauan lereng pasca-guncangan. Aturan R3 (butuh hujan) belum terpenuhi.',src:'Advisori rekonstruksi'}
+];
+const SENS=[
+{id:'DEMO-GNSS-01',type:'GNSS',kind:'gnss',unit:'mm',lat:-0.91,lon:119.86,kab:'Kota Palu',kec:'Palu Selatan',f:1,q:'BAIK',o:1},
+{id:'DEMO-GNSS-02',type:'GNSS',kind:'gnss',unit:'mm',lat:-1.05,lon:119.95,kab:'Sigi',kec:'Sigi Biromaru',f:.7,q:'BAIK',o:2},
+{id:'DEMO-GNSS-03',type:'GNSS',kind:'gnss',unit:'mm',lat:-0.68,lon:119.75,kab:'Donggala',kec:'Banawa',f:.9,q:'CUKUP',o:3},
+{id:'DEMO-GNSS-04',type:'GNSS',kind:'gnss',unit:'mm',lat:-0.80,lon:120.15,kab:'Parigi Moutong',kec:'Parigi',f:.5,q:'BAIK',o:4},
+{id:'DEMO-RAIN-01',type:'Curah Hujan',kind:'rain',unit:'mm/jam',lat:-0.90,lon:119.90,kab:'Kota Palu',kec:'Mantikulore',f:1,q:'BAIK',o:1},
+{id:'DEMO-RAIN-02',type:'Curah Hujan',kind:'rain',unit:'mm/jam',lat:-1.10,lon:119.92,kab:'Sigi',kec:'Marawola',f:1,q:'CUKUP',o:2},
+{id:'DEMO-RAIN-03',type:'Curah Hujan',kind:'rain',unit:'mm/jam',lat:-0.75,lon:120.10,kab:'Parigi Moutong',kec:'Parigi',f:1,q:'BURUK',o:3,offline:true},
+{id:'DEMO-GW-01',type:'Muka Air Tanah',kind:'gw',unit:'m',lat:-0.93,lon:119.90,kab:'Kota Palu',kec:'Palu Selatan',f:1,q:'BAIK',o:1},
+{id:'DEMO-GW-02',type:'Muka Air Tanah',kind:'gw',unit:'m',lat:-1.00,lon:119.88,kab:'Sigi',kec:'Sigi Biromaru',f:.8,q:'CUKUP',o:2},
+{id:'DEMO-SEIS-01',type:'Seismik',kind:'seis',unit:'gal',lat:-0.88,lon:119.84,kab:'Kota Palu',kec:'Palu Barat',f:1,q:'BAIK',o:1},
+{id:'DEMO-SEIS-02',type:'Seismik',kind:'seis',unit:'gal',lat:-1.12,lon:119.98,kab:'Sigi',kec:'Dolo',f:.6,q:'BAIK',o:2},
+{id:'DEMO-SEIS-03',type:'Seismik',kind:'seis',unit:'gal',lat:-0.62,lon:119.85,kab:'Donggala',kec:'Sindue',f:.8,q:'CUKUP',o:3},
+{id:'DEMO-DISP-01',type:'Deformasi Permukaan',kind:'disp',unit:'mm',lat:-0.94,lon:119.91,kab:'Kota Palu',kec:'Palu Selatan',f:1,q:'BAIK',o:1},
+{id:'DEMO-DISP-02',type:'Deformasi Permukaan',kind:'disp',unit:'mm',lat:-0.905,lon:119.835,kab:'Kota Palu',kec:'Palu Barat',f:.8,q:'CUKUP',o:2}
+];
+const LIQ=[
+{id:'LQ-PETOBO',n:'Petobo',lon:119.911,lat:-0.94,kab:'Kota Palu',kec:'Palu Selatan',risk:'VERY HIGH',doc:1},
+{id:'LQ-BALAROA',n:'Balaroa',lon:119.835,lat:-0.905,kab:'Kota Palu',kec:'Palu Barat',risk:'VERY HIGH',doc:1},
+{id:'LQ-JONO',n:'Jono Oge',lon:119.93,lat:-1.03,kab:'Sigi',kec:'Sigi Biromaru',risk:'VERY HIGH',doc:1},
+{id:'LQ-SIBALAYA',n:'Sibalaya',lon:119.92,lat:-1.14,kab:'Sigi',kec:'Tanambulava',risk:'VERY HIGH',doc:1},
+{id:'LQ-D1',n:'Zona demo A',lon:119.75,lat:-0.80,kab:'Donggala',kec:'Banawa',risk:'MEDIUM'},
+{id:'LQ-D2',n:'Zona demo B',lon:119.86,lat:-0.66,kab:'Kota Palu',kec:'Tawaeli',risk:'HIGH'},
+{id:'LQ-D3',n:'Zona demo C',lon:120.17,lat:-0.80,kab:'Parigi Moutong',kec:'Parigi',risk:'MEDIUM'},
+{id:'LQ-D4',n:'Zona demo D',lon:119.83,lat:-0.45,kab:'Donggala',kec:'Sirenja',risk:'LOW'},
+{id:'LQ-D5',n:'Zona demo E',lon:119.97,lat:-1.22,kab:'Sigi',kec:'Kinovaro',risk:'LOW'}
+];
+const LSL=[
+{id:'LS-01',lon:119.72,lat:-0.80,kab:'Donggala',kec:'Banawa',risk:'HIGH'},
+{id:'LS-02',lon:119.86,lat:-0.56,kab:'Donggala',kec:'Sindue',risk:'MEDIUM'},
+{id:'LS-03',lon:119.84,lat:-0.34,kab:'Donggala',kec:'Sirenja',risk:'MEDIUM'},
+{id:'LS-04',lon:119.95,lat:-0.86,kab:'Kota Palu',kec:'Mantikulore',risk:'HIGH'},
+{id:'LS-05',lon:119.78,lat:-0.96,kab:'Kota Palu',kec:'Ulujadi',risk:'MEDIUM'},
+{id:'LS-06',lon:119.98,lat:-1.05,kab:'Sigi',kec:'Sigi Biromaru',risk:'HIGH'},
+{id:'LS-07',lon:119.90,lat:-1.18,kab:'Sigi',kec:'Tanambulava',risk:'MEDIUM'},
+{id:'LS-08',lon:120.05,lat:-1.20,kab:'Sigi',kec:'Kinovaro',risk:'LOW'},
+{id:'LS-09',lon:120.08,lat:-0.88,kab:'Parigi Moutong',kec:'Parigi',risk:'MEDIUM'},
+{id:'LS-10',lon:120.10,lat:-0.60,kab:'Parigi Moutong',kec:'Parigi',risk:'LOW'},
+{id:'LS-11',lon:120.05,lat:-0.30,kab:'Parigi Moutong',kec:'Parigi',risk:'LOW'},
+{id:'LS-12',lon:119.95,lat:-0.45,kab:'Donggala',kec:'Tanantovea',risk:'LOW'}
+];
+const FAULT=[[119.82,-0.2],[119.83,-0.45],[119.84,-0.62],[119.86,-0.8],[119.9,-0.92],[119.96,-1.05],[120.05,-1.3]];
+const TSU=[[119.68,-0.72],[119.70,-0.64],[119.74,-0.70],[119.76,-0.78],[119.80,-0.86],[119.85,-0.91],[119.88,-0.85],[119.88,-0.78],[119.86,-0.70],[119.82,-0.62]];
+const HOSP=[{n:'Fasilitas kesehatan A',lon:119.87,lat:-0.91,kab:'Kota Palu'},{n:'Fasilitas kesehatan B',lon:119.75,lat:-0.68,kab:'Donggala'},{n:'Fasilitas kesehatan C',lon:119.90,lat:-1.01,kab:'Sigi'},{n:'Fasilitas kesehatan D',lon:120.17,lat:-0.80,kab:'Parigi Moutong'}];
+const SCH=[{n:'Sekolah A',lon:119.88,lat:-0.89,kab:'Kota Palu'},{n:'Sekolah B',lon:119.84,lat:-0.93,kab:'Kota Palu'},{n:'Sekolah C',lon:119.76,lat:-0.70,kab:'Donggala'},{n:'Sekolah D',lon:119.94,lat:-1.08,kab:'Sigi'},{n:'Sekolah E',lon:120.15,lat:-0.82,kab:'Parigi Moutong'}];
+const EVAC=[{n:'Titik kumpul 1',lon:119.90,lat:-0.86,kab:'Kota Palu'},{n:'Titik kumpul 2',lon:119.82,lat:-0.95,kab:'Kota Palu'},{n:'Titik kumpul 3',lon:119.77,lat:-0.73,kab:'Donggala'},{n:'Titik kumpul 4',lon:119.96,lat:-1.12,kab:'Sigi'},{n:'Titik kumpul 5',lon:120.12,lat:-0.78,kab:'Parigi Moutong'}];
+const POP=[{n:'Kawasan Palu',lon:119.87,lat:-0.90,r:34,idx:85,kab:'Kota Palu'},{n:'Kawasan Donggala',lon:119.75,lat:-0.68,r:20,idx:45,kab:'Donggala'},{n:'Kawasan Sigi',lon:119.92,lat:-1.02,r:24,idx:55,kab:'Sigi'},{n:'Kawasan Parigi',lon:120.17,lat:-0.80,r:18,idx:40,kab:'Parigi Moutong'}];
+const ROADS=[{n:'Ruas Palu–Donggala (skematik)',p:[[119.83,-0.91],[119.77,-0.82],[119.73,-0.70]]},{n:'Ruas Palu–Sigi (skematik)',p:[[119.87,-0.91],[119.90,-0.98],[119.94,-1.06],[119.97,-1.22]]},{n:'Ruas Palu–Parigi (skematik)',p:[[119.88,-0.90],[119.98,-0.86],[120.10,-0.83],[120.18,-0.80]]},{n:'Ruas Palu–utara (skematik)',p:[[119.89,-0.90],[119.88,-0.80],[119.87,-0.70],[119.84,-0.40],[119.83,-0.2]]}];
+const INSB=[{n:'Anomali LOS demo A',lon:119.88,lat:-0.92,rx:32,ry:52,v:'−24 cm (DEMO)',c:'#e5482d'},{n:'Anomali LOS demo B',lon:119.94,lat:-1.06,rx:26,ry:40,v:'+18 cm (DEMO)',c:'#2f7de1'}];
+const POST=[{n:'Zona rawan pascabencana — Petobo (skematik)',lon:119.911,lat:-0.94,r:20},{n:'Zona rawan pascabencana — Balaroa (skematik)',lon:119.835,lat:-0.905,r:20},{n:'Zona rawan pascabencana — Jono Oge/Sibalaya (skematik)',lon:119.925,lat:-1.085,r:30}];
+const LAND=[[119.75,0.4],[119.75,0.0],[119.78,-0.2],[119.78,-0.4],[119.79,-0.52],[119.83,-0.62],[119.86,-0.7],[119.88,-0.8],[119.87,-0.88],[119.85,-0.92],[119.8,-0.86],[119.76,-0.78],[119.73,-0.7],[119.7,-0.64],[119.68,-0.72],[119.66,-0.85],[119.6,-1.0],[119.5,-1.5],[120.7,-1.5],[120.5,-1.1],[120.32,-0.95],[120.2,-0.75],[120.24,-0.4],[120.2,0.0],[120.25,0.4]];
+const GOV=[
+['Tanggap Darurat','Penetapan status tanggap darurat bencana','Pemprov Sulteng / BNPB','28 Sep 2018 (verifikasi)','Sulawesi Tengah','Dilaporkan'],
+['Tanggap Darurat','Pencarian dan pertolongan (SAR) korban','Basarnas / BNPB / TNI-Polri','Sep–Okt 2018','Palu, Sigi, Donggala','Dilaporkan'],
+['Evakuasi','Evakuasi korban dan warga terdampak','BNPB / Basarnas / TNI','Sep 2018','Palu–Donggala','Dilaporkan'],
+['Evakuasi','Distribusi logistik dan bantuan darurat','BNPB / Kemensos','Sep–Okt 2018','Wilayah terdampak','Dilaporkan'],
+['Pengungsian','Posko dan tenda pengungsian','BNPB / BPBD / Kemensos','Okt 2018','Palu, Sigi, Donggala','Dilaporkan'],
+['Pengungsian','Hunian sementara (huntara)','Kementerian PUPR / BNPB','2018–2019','Palu, Sigi, Donggala','Dilaporkan'],
+['Infrastruktur','Pemulihan akses jalan, listrik, air bersih','PUPR / PLN / PDAM','Okt 2018 dst.','Wilayah terdampak','Dilaporkan'],
+['Infrastruktur','Pemulihan bandara dan pelabuhan (akses logistik)','Kemenhub / otoritas terkait','Okt 2018 dst.','Palu, Donggala','Dilaporkan'],
+['Rehabilitasi','Rehabilitasi fasilitas kesehatan dan pendidikan','Kementerian terkait / Pemda','2019 dst.','Wilayah terdampak','Dilaporkan'],
+['Rehabilitasi','Bantuan stimulan perumahan','BNPB / Pemda','2019 dst.','Wilayah terdampak','Dilaporkan'],
+['Rekonstruksi','Pembangunan hunian tetap (huntap)','PUPR / BNPB','2019 dst.','Palu, Sigi, Donggala','Dilaporkan'],
+['Rekonstruksi','Rencana aksi rehabilitasi dan rekonstruksi (mis. Inpres 10/2018 — verifikasi)','Pemerintah pusat','Akhir 2018 (verifikasi)','Sulawesi Tengah','Dilaporkan'],
+['Tata Ruang','Penetapan zona rawan bencana dan penyesuaian tata ruang','ATR/BPN / Pemda','2019 dst. (verifikasi)','Palu, Sigi, Donggala','Dilaporkan'],
+['Tata Ruang','Relokasi dari zona likuifaksi (Petobo, Balaroa, Jono Oge, Sibalaya)','Pemda / Kementerian terkait','2019 dst. (verifikasi)','Palu, Sigi','Dilaporkan'],
+['Sistem Peringatan Dini','Evaluasi dan perbaikan sistem peringatan dini tsunami','BMKG','Pasca 2018 (verifikasi)','Nasional / Sulteng','Dilaporkan'],
+['Sistem Peringatan Dini','Penambahan sensor dan sarana diseminasi (sirene, dll.)','BMKG / BNPB / BPBD','Pasca 2018 (verifikasi)','Wilayah pesisir','Dilaporkan'],
+['Edukasi Masyarakat','Sosialisasi dan simulasi kebencanaan','BPBD / BNPB','Pasca 2018 (verifikasi)','Sulawesi Tengah','Dilaporkan'],
+['Edukasi Masyarakat','Integrasi pendidikan kebencanaan di sekolah','Dinas Pendidikan / BPBD','Pasca 2018 (verifikasi)','Sulawesi Tengah','Dilaporkan']
+].map((r,i)=>({id:'GR-'+pad(i+1),phase:r[0],act:r[1],agency:r[2],date:r[3],loc:r[4],status:r[5],ev:'Belum ditautkan — cari di data.bnpb.go.id',evUrl:'https://data.bnpb.go.id/',note:'Perlu bukti dokumen sebelum dipakai dalam analisis.',verified:false}));
+const PHASES=['Tanggap Darurat','Evakuasi','Pengungsian','Infrastruktur','Rehabilitasi','Rekonstruksi','Tata Ruang','Sistem Peringatan Dini','Edukasi Masyarakat'];
+const SRC=[
+['BMKG Gempabumi','https://data.bmkg.go.id/gempabumi/','Gempabumi terkini (autogempa)',false],
+['BNPB / InaRISK','https://inarisk2.bnpb.go.id/portal/','Portal InaRISK',false],
+['BNPB WebGIS Sulteng','https://inarisk.bnpb.go.id/gempa_sulteng/','WebGIS gempa Sulteng',false],
+['BNPB Data','https://data.bnpb.go.id/','Data kebencanaan BNPB',false],
+['BIG / Ina-CORS','https://srgi.big.go.id/','Ina-CORS / SRGI (GNSS)',false],
+['USGS','https://earthquake.usgs.gov/','Katalog gempa USGS',false],
+['Copernicus Data Space','https://dataspace.copernicus.eu/','Sentinel-1 SLC/GRD',false],
+['ASF','https://www.asf.alaska.edu/','Arsip Sentinel-1 (ASF)',false],
+['Data.go.id','https://data.go.id/','Portal data pemerintah',false],
+['Seed lokal prototipe','(tidak ada)','Sensor DEMO-* dan rekonstruksi',true]
+];
+const INS=(()=>{const a=[],d0=Date.UTC(2018,5,20),ev=Date.UTC(2018,8,28);for(let i=0;i<22;i++){const t=d0+i*12*864e5,post=t>=ev;a.push({lab:new Date(t).toISOString().slice(0,10),v:(post?-24-1.2*Math.log(1+(t-ev)/864e5):0)+(rnd(i*3.1)-.5)*.8,m:i});}return a;})();
+
+/* ================= state ================= */
+const TH0={eqMag:5.0,tsMag:7.0,tsDepth:70,gnss:10,rain:20,mmi:7,pga:10,tsLvl:.5,gwDrop:.5};
+const SECS=['Executive summary','Peta','Kejadian bahaya','Peringatan','Data sensor','Zona risiko','Timeline respons pemerintah','Catatan evaluasi','Sumber'];
+const S={page:'beranda',mode:'replay',step:4,playing:false,speed:1,pm:false,tab:'eq',rangeI:0,nav:false,bell:false,lm:false,
+ layers:{eq:1,ts:1,liq:1,ls:1,fault:1,pop:0,hosp:0,sch:0,road:0,evac:0,gnss:1,rain:1,insar:0,post:0},
+ riskTab:'multi',flt:{kab:'',kec:'',risk:''},rx:{crit:0,road:0,pop:0},sel:'DEMO-GNSS-01',th:{...TH0},admin:true,live:{state:'loading'},
+ an:{hz:'',reg:'',src:'',st:'',rs:'',date:'2018-09-28',pg:0},
+ rep:{from:'2018-09-28',to:'2018-09-28',hz:'',reg:'',src:'',sec:Object.fromEntries(SECS.map(s=>[s,true])),done:false},theme:'auto',ready:false};
+const R=()=>S.mode==='replay';
+const MV={};const FE={};const CH={};let FN=0;
+const ASP=1.1;
+
+/* ================= signal model (SIMULATED) ================= */
+function val(k,m,sp,off=0,f=1){
+ const n=rnd(hsh(k)+off*97+m*7.31)-.5,e=sp&&m>=0;
+ switch(k){
+ case 'eq':if(!sp||m<0)return 1.2+n*.8;if(m===0)return 7.5;return Math.max(1.5,3.2+2.6*Math.exp(-m/45)+n*1.6);
+ case 'ts':return n*.12+(sp&&m>=6?1.6*Math.exp(-(m-6)/30)*Math.sin((m-6)*.7):0);
+ case 'rain':return Math.max(0,4+2.5*Math.sin(m/47+off)+n*2);
+ case 'gnss':return .4+n*.3+(e?f*(12+1.8*(1-Math.exp(-m/60)))+n*.4:0);
+ case 'disp':return .3+n*.3+(e?f*(9+1.5*(1-Math.exp(-m/60)))+n*.4:0);
+ case 'gw':return 3.2+n*.06-(e?.9*f*(1-Math.exp(-m/25)):0);
+ case 'seis':return .15+Math.abs(n)*.5+(e?f*320*Math.exp(-m/9):0);
+ }return 0;
+}
+const KIND={
+ eq:{l:'Magnitudo maksimum per menit',u:'M',base:1.2,th:()=>S.th.eqMag,thl:'Ambang gempa',dec:1,dir:'a',src:'USGS (gempa utama, terdokumentasi) + susulan SIMULASI',bd:'sim'},
+ ts:{l:'Anomali muka laut (gauge DEMO)',u:'m',base:0,th:()=>S.th.tsLvl,thl:'Ambang anomali',dec:2,dir:'abs',src:'SIMULASI — bukan pengukuran pasut',bd:'sim'},
+ rain:{l:'Curah hujan',u:'mm/jam',base:4,th:()=>S.th.rain,thl:'Ambang hujan',dec:1,dir:'a',src:'Stasiun hujan DEMO (simulasi)',bd:'sim'},
+ gnss:{l:'Perpindahan GNSS',u:'mm',base:.4,th:()=>S.th.gnss,thl:'Ambang GNSS',dec:1,dir:'a',src:'DEMO-GNSS (simulasi)',bd:'sim'},
+ disp:{l:'Deformasi permukaan',u:'mm',base:.3,th:()=>S.th.gnss,thl:'Ambang deformasi',dec:1,dir:'a',src:'DEMO-DISP (simulasi)',bd:'sim'},
+ gw:{l:'Kedalaman muka air tanah',u:'m',base:3.2,th:()=>3.2-S.th.gwDrop,thl:'Ambang kenaikan muka air',dec:2,dir:'b',src:'DEMO-GW (simulasi)',bd:'sim'},
+ seis:{l:'Percepatan tanah',u:'gal',base:.3,th:()=>S.th.pga,thl:'Ambang PGA',dec:1,dir:'a',src:'DEMO-SEIS (simulasi)',bd:'sim'}
+};
+const isAn=(k,v)=>{const c=KIND[k],t=c.th();return c.dir==='b'?v<t:c.dir==='abs'?Math.abs(v)>=t:v>=t;};
+const fmt=(k,v)=>v==null?'—':v.toFixed(KIND[k].dec);
+const curM=()=>STEPS[S.step].m;
+const sAt=(s,m)=>s.offline?null:val(s.kind,m,R(),s.o,s.f);
+const sStat=(s,m=curM())=>{if(s.offline)return'OFFLINE';const v=sAt(s,m);return isAn(s.kind,v)?'WARNING':'NORMAL';};
+const stCol={NORMAL:'#178a4c',WARNING:'#e07b00',OFFLINE:'#7b879b',ALERT:'#d92d20'};
+const stCls={NORMAL:'lv-grn',WARNING:'lv-org',OFFLINE:'lv-gry'};
+const RNG=()=>R()?[{l:'16:00–20:00',from:-62,to:178,step:2},{l:'±30 mnt',from:-30,to:30,step:1},{l:'0–3 jam',from:0,to:180,step:2}]:[{l:'24 jam',from:-1440,to:0,step:15},{l:'6 jam',from:-360,to:0,step:5},{l:'1 jam',from:-60,to:0,step:1}];
+function tlabel(m){if(R())return hm(1022+m);const d=new Date(Date.now()+m*60000);return pad(d.getHours())+':'+pad(d.getMinutes());}
+function series(kind,rng,o=0,f=1){const p=[];for(let m=rng.from;m<=rng.to;m+=rng.step)p.push({m,v:val(kind,m,R(),o,f),lab:tlabel(m)});return p;}
+
+/* ================= charts ================= */
+function lineChart(id,c){
+ if(!c.pts||!c.pts.length)return `<div class="empty">Tidak ada data untuk rentang ini.</div>`;
+ const W=640,H=c.h||230,L=46,Rr=12,T=14,B=28,pts=c.pts,n=pts.length;
+ const vs=pts.map(p=>p.v);let lo=Math.min(...vs,c.base,c.thv),hi=Math.max(...vs,c.base,c.thv);
+ const pd=(hi-lo)*.12||1;lo-=pd;hi+=pd;
+ const X=i=>L+(W-L-Rr)*(n>1?i/(n-1):.5),Y=v=>T+(H-T-B)*(1-(v-lo)/(hi-lo));
+ CH[id]={c,W,L,R:Rr,X};
+ let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(c.name||'Grafik')}">`;
+ for(let i=0;i<=4;i++){const v=lo+(hi-lo)*i/4,y=Y(v);s+=`<line x1="${L}" x2="${W-Rr}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${L-6}" y="${y+4}" font-size="10" text-anchor="end" fill="var(--mut)">${v.toFixed(c.dec>1?2:1)}</text>`;}
+ for(let i=0;i<=4;i++){const k=Math.round((n-1)*i/4);s+=`<text x="${X(k)}" y="${H-8}" font-size="10" text-anchor="middle" fill="var(--mut)">${esc(pts[k].lab)}</text>`;}
+ const line=pts.map((p,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(p.v).toFixed(1)).join('');
+ s+=`<path d="${line}L${X(n-1)} ${Y(lo)}L${X(0)} ${Y(lo)}Z" fill="var(--blue)" opacity=".10"/>`;
+ s+=`<line x1="${L}" x2="${W-Rr}" y1="${Y(c.base)}" y2="${Y(c.base)}" stroke="#7b879b" stroke-dasharray="5 4"/>`;
+ s+=`<line x1="${L}" x2="${W-Rr}" y1="${Y(c.thv)}" y2="${Y(c.thv)}" stroke="var(--red)" stroke-dasharray="6 4"/><text x="${W-Rr-2}" y="${Y(c.thv)-4}" font-size="10" text-anchor="end" fill="var(--red)">${esc(c.thl)}</text>`;
+ s+=`<path d="${line}" fill="none" stroke="var(--blue)" stroke-width="2"/>`;
+ pts.forEach((p,i)=>{if(c.an(p.v))s+=`<circle cx="${X(i)}" cy="${Y(p.v)}" r="3" fill="var(--red)"><title>Anomali ${esc(p.lab)}: ${p.v.toFixed(c.dec)} ${esc(c.unit)}</title></circle>`;});
+ if(c.cur!=null){let bi=0,bd=1e9;pts.forEach((p,i)=>{const d=Math.abs(p.m-c.cur);if(d<bd){bd=d;bi=i;}});s+=`<line x1="${X(bi)}" x2="${X(bi)}" y1="${T}" y2="${H-B}" stroke="var(--blue)" stroke-dasharray="3 3"/><text x="${X(bi)+4}" y="${T+10}" font-size="10" fill="var(--blue)">kini</text>`;}
+ s+=`<line class="xh" y1="${T}" y2="${H-B}" stroke="var(--mut)" style="display:none"/></svg><div class="tt" hidden></div>`;
+ return `<div class="chart" data-c="${id}">${s}</div>`;
+}
+function chartLegend(){return `<div class="cleg"><span><i style="border-color:var(--blue)"></i>Nilai</span><span><i style="border-color:#7b879b;border-top-style:dashed"></i>Baseline historis</span><span><i style="border-color:var(--red);border-top-style:dashed"></i>Ambang (demo)</span><span><span style="color:var(--red)">●</span> Anomali</span></div>`;}
+function chartFor(id,kind,o=0,f=1,h){
+ const K=KIND[kind],r=RNG()[S.rangeI]||RNG()[0];
+ return lineChart(id,{pts:series(kind,r,o,f),unit:K.u,dec:K.dec,base:K.base,thv:K.th(),thl:K.thl,an:v=>isAn(kind,v),cur:R()?curM():null,name:K.l,h});
+}
+function barChart(items,unit,h=190){
+ if(!items.length)return `<div class="empty">Tidak ada data.</div>`;
+ const W=640,L=30,max=Math.max(1,...items.map(i=>i.v)),bw=(W-L-10)/items.length;
+ let s=`<svg viewBox="0 0 ${W} ${h}" role="img" aria-label="Diagram batang">`;
+ items.forEach((it,i)=>{const bh=(h-46)*it.v/max,x=L+i*bw+bw*.15;s+=`<rect x="${x}" y="${h-28-bh}" width="${bw*.7}" height="${bh}" rx="4" fill="${it.c||'var(--blue)'}"><title>${esc(it.l)}: ${it.v} ${unit}</title></rect><text x="${x+bw*.35}" y="${h-32-bh}" font-size="10" text-anchor="middle" fill="var(--ink)">${it.v}</text><text x="${x+bw*.35}" y="${h-10}" font-size="10" text-anchor="middle" fill="var(--mut)">${esc(it.l)}</text>`;});
+ return s+'</svg>';
+}
+
+/* ================= map ================= */
+const P=(lo,la)=>[(lo-119)*500,-la*500];
+const pl=a=>a.map(([lo,la])=>P(lo,la).map(n=>n.toFixed(1)).join(',')).join(' ');
+const RC={LOW:'#e6c200',MEDIUM:'#f08a00',HIGH:'#e5482d','VERY HIGH':'#a3121a'};
+const nowTxt=()=>R()?`28 Sep 2018, ${STEPS[S.step].t} WIB`:new Date().toLocaleString('id-ID');
+function pass(o){const f=S.flt;return (!f.kab||!o.kab||o.kab===f.kab)&&(!f.kec||!o.kec||o.kec===f.kec)&&(!f.risk||!o.risk||o.risk===f.risk);}
+function mapSVG(id,o){
+ const v=MV[id]||(MV[id]={x:130,y:-15,w:600}),k=v.w/600,L=o.layers||S.layers;
+ const vis=key=>{if(!L[key])return false;if(o.free)return true;if(R()){const need={eq:1,ts:2}[key];return need===undefined||S.step>=need;}return !(key==='eq'||key==='ts');};
+ const reg=x=>{const i='f'+(FN++);FE[i]=x;return i;};
+ let s=`<svg viewBox="${v.x} ${v.y} ${v.w} ${v.w*ASP}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Peta skematik Sulawesi Tengah">`;
+ s+=`<polygon points="${pl(LAND)}" fill="#2f5a3c" stroke="#9cc7a8" stroke-width="${1.5*k}"/>`;
+ [[120.0,-1.1,60,100],[119.95,-0.5,50,90],[119.72,-0.85,22,55],[120.12,-0.4,40,80]].forEach(([lo,la,rx,ry])=>{const [x,y]=P(lo,la);s+=`<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#21432c" opacity=".55"/>`;});
+ s+=`<polyline points="${pl(FAULT)}" fill="none" stroke="#4a8558" stroke-width="${22*k}" opacity=".35" stroke-linecap="round"/>`;
+ const txt=(lo,la,t,sz=13,cl='#fff',it)=>{const [x,y]=P(lo,la);return `<text x="${x}" y="${y}" font-size="${sz*k}" fill="${cl}" ${it?'font-style="italic"':'font-weight="700"'} text-anchor="middle" stroke="rgba(0,0,0,.45)" stroke-width="${2.5*k}" paint-order="stroke">${t}</text>`;};
+ s+=txt(119.3,-0.45,'Selat Makassar',12,'#8fb4e8',1)+txt(120.52,-0.3,'Teluk Tomini',12,'#8fb4e8',1)+txt(119.80,-0.74,'Teluk Palu',9,'#8fb4e8',1);
+ if(vis('road'))ROADS.forEach(r=>{const i=reg({title:r.n,loc:'Sulawesi Tengah',hz:'Infrastruktur',risk:'—',val:'Jalur skematik',time:nowTxt(),src:'Placeholder DEMO (ganti dengan OSM/BNPB)',bd:'sim'});s+=`<polyline data-f="${i}" points="${pl(r.p)}" fill="none" stroke="#d6dbe5" stroke-width="${2.5*k}" stroke-dasharray="${6*k} ${4*k}" style="cursor:pointer"/>`;});
+ if(vis('pop'))POP.forEach(p=>{if(S.flt.kab&&p.kab!==S.flt.kab)return;const [x,y]=P(p.lon,p.lat),i=reg({title:p.n,loc:p.kab,hz:'Paparan penduduk',risk:'—',val:'Indeks kepadatan '+p.idx+' (0–100, DEMO)',time:nowTxt(),src:'DEMO — ganti dengan data BPS/WorldPop',bd:'sim'});s+=`<circle data-f="${i}" cx="${x}" cy="${y}" r="${p.r*1.4}" fill="#b79bff" opacity=".35" stroke="#d8c9ff" stroke-width="${k}" style="cursor:pointer"/>`;});
+ if(vis('insar'))INSB.forEach(b=>{const [x,y]=P(b.lon,b.lat),i=reg({title:b.n,loc:'Zona sesar Palu-Koro (skematik)',hz:'Deformasi',risk:'—',val:b.v,time:nowTxt(),src:'DEMO — bukan pengukuran Sentinel-1',bd:'sim'});s+=`<ellipse data-f="${i}" cx="${x}" cy="${y}" rx="${b.rx}" ry="${b.ry}" fill="${b.c}" opacity=".5" stroke="#fff" stroke-dasharray="${4*k} ${3*k}" stroke-width="${k}" style="cursor:pointer"/>`;});
+ if(vis('post'))POST.forEach(z=>{const [x,y]=P(z.lon,z.lat),i=reg({title:z.n,loc:'Palu / Sigi',hz:'Tata ruang pascabencana',risk:'—',val:'Zona skematik dari lokasi terdokumentasi',time:'—',src:'Rekonstruksi skematik (bukan batas resmi ZRB)',bd:'rec'});s+=`<circle data-f="${i}" cx="${x}" cy="${y}" r="${z.r}" fill="#a98bf0" opacity=".25" stroke="#d8c9ff" stroke-width="${2*k}" stroke-dasharray="${6*k} ${4*k}" style="cursor:pointer"/>`;});
+ if(vis('liq'))LIQ.forEach(z=>{if(!pass(z))return;const [x,y]=P(z.lon,z.lat),al=!o.free&&R()&&S.step>=3&&z.doc,i=reg({title:'Likuifaksi — '+z.n,loc:z.kab+(z.kec?' / '+z.kec:''),hz:'Likuifaksi',risk:z.risk+(z.doc?' (penanda prototipe)':''),val:z.doc?'Lokasi terdokumentasi (koordinat perkiraan)':'Zona demo skematik',time:al?nowTxt():'Statis',src:z.doc?'Dokumentasi pascabencana (verifikasi ke BNPB/PVMBG)':'DEMO — ganti dengan InaRISK',bd:z.doc?'doc':'sim'});
+  if(al)s+=`<circle class="pulse" cx="${x}" cy="${y}" r="${18*k}" fill="none" stroke="#ff6a4d" stroke-width="${2*k}"/>`;
+  s+=`<circle data-f="${i}" cx="${x}" cy="${y}" r="${(z.doc?12:10)*k}" fill="${RC[z.risk]}" opacity=".78" stroke="#fff" stroke-width="${1.5*k}" style="cursor:pointer"/>`;});
+ if(vis('fault')){const i=reg({title:'Sesar Palu-Koro (skematik)',loc:'Teluk Palu – Sigi',hz:'Sesar aktif',risk:'—',val:'Jalur digambar manual',time:'Statis',src:'Skematik — ganti dengan katalog sesar PuSGeN',bd:'sim'});s+=`<polyline data-f="${i}" points="${pl(FAULT)}" fill="none" stroke="#ffa53a" stroke-width="${3*k}" stroke-dasharray="${9*k} ${5*k}" style="cursor:pointer"/>`;}
+ if(vis('ts')){const i=reg({title:'Zona potensi tsunami — Teluk Palu',loc:'Palu, Donggala',hz:'Tsunami',risk:'HIGH',val:'Garis pesisir skematik',time:nowTxt(),src:'Output sistem rekonstruksi',bd:'rec'});s+=`<polyline data-f="${i}" points="${pl(TSU)}" fill="none" stroke="#22d3ee" stroke-width="${5*k}" stroke-dasharray="${8*k} ${5*k}" stroke-linecap="round" style="cursor:pointer"/>`;}
+ if(vis('ls'))LSL.forEach(z=>{if(!pass(z))return;const [x,y]=P(z.lon,z.lat),a=11*k,i=reg({title:'Longsor — '+z.id,loc:z.kab+' / '+z.kec,hz:'Longsor',risk:z.risk,val:'Lereng rawan (demo)',time:'Statis',src:'DEMO — ganti dengan InaRISK/PVMBG',bd:'sim'});s+=`<path data-f="${i}" d="M${x} ${y-a}L${x+a} ${y+a*.8}L${x-a} ${y+a*.8}Z" fill="${RC[z.risk]}" stroke="#fff" stroke-width="${1.5*k}" style="cursor:pointer"/>`;});
+ const box=(arr,key,letter,col,hz)=>{if(!vis(key))return;arr.forEach(h=>{if(!pass(h))return;const [x,y]=P(h.lon,h.lat),a=8*k,i=reg({title:h.n,loc:h.kab,hz,risk:'—',val:'Penanda placeholder',time:'Statis',src:'DEMO — ganti dengan data resmi/OSM',bd:'sim'});s+=`<rect data-f="${i}" x="${x-a}" y="${y-a}" width="${2*a}" height="${2*a}" rx="${2*k}" fill="${col}" stroke="#fff" stroke-width="${1.5*k}" style="cursor:pointer"/><text x="${x}" y="${y+3.5*k}" font-size="${10*k}" fill="#fff" font-weight="700" text-anchor="middle" pointer-events="none">${letter}</text>`;});};
+ box(HOSP,'hosp','H','#d92d20','Fasilitas kritis');box(SCH,'sch','S','#1d5fd1','Fasilitas kritis');box(EVAC,'evac','E','#178a4c','Titik evakuasi');
+ const sens=(kinds,letter)=>SENS.filter(x=>kinds.includes(x.kind)&&pass(x)).forEach(x=>{const [px,py]=P(x.lon,x.lat),st=sStat(x),v=sAt(x,curM()),i=reg({title:x.id,loc:x.kab+' / '+x.kec,hz:x.type,risk:st,val:v==null?'Offline':fmt(x.kind,v)+' '+x.unit,time:nowTxt(),src:'SIMULATED SENSOR DATA',bd:'sim',sid:x.id});s+=`<circle data-f="${i}" cx="${px}" cy="${py}" r="${8*k}" fill="#0b1f45" stroke="${stCol[st]}" stroke-width="${3*k}" style="cursor:pointer"/><text x="${px}" y="${py+3.3*k}" font-size="${9*k}" fill="#fff" font-weight="700" text-anchor="middle" pointer-events="none">${letter}</text>`;});
+ if(o.allSensors){if(vis('gnss')||vis('rain')){sens(['gw'],'W');sens(['seis'],'S');sens(['disp'],'D');}}
+ if(vis('gnss'))sens(['gnss'],'G');
+ if(vis('rain'))sens(['rain'],'R');
+ if(vis('eq')){const [x,y]=P(QUAKE.lon,QUAKE.lat);
+  if(o.free||true){[30,60,100].forEach((km,j)=>s+=`<circle cx="${x}" cy="${y}" r="${km*4.5}" fill="none" stroke="#ffb35c" stroke-opacity="${.6-j*.15}" stroke-dasharray="${4*k} ${4*k}" stroke-width="${1.5*k}"/>`);}
+  const i=reg({title:'Episentrum gempa M7.5',loc:'0,178°LS 119,840°BT (USGS), Sulawesi Tengah',hz:'Gempa',risk:'HIGH',val:'M7.5 · kedalaman 20 km (USGS)',time:'28 Sep 2018, 17:02 WIB (18:02 WITA)',src:'USGS — parameter BMKG dapat berbeda; sebutkan sumber',bd:'off'});
+  s+=`<circle class="pulse" cx="${x}" cy="${y}" r="${26*k}" fill="none" stroke="#ff3b2f" stroke-width="${3*k}"/><circle data-f="${i}" cx="${x}" cy="${y}" r="${9*k}" fill="#e5261b" stroke="#fff" stroke-width="${2.5*k}" style="cursor:pointer"/>`;
+  s+=`<text x="${x+14*k}" y="${y-10*k}" font-size="${11*k}" fill="#fff" font-weight="700" stroke="rgba(0,0,0,.5)" stroke-width="${2.5*k}" paint-order="stroke">M7.5</text><text x="${x}" y="${y+(ASP*0)+28*k}" font-size="${9*k}" fill="#ffd9b0" text-anchor="middle" stroke="rgba(0,0,0,.5)" stroke-width="${2*k}" paint-order="stroke">cincin = guncangan skematik (rekonstruksi)</text>`;}
+ s+=txt(119.87,-0.97,'Palu',14)+txt(119.70,-0.52,'Donggala',13)+txt(119.97,-1.30,'Sigi',13)+txt(120.08,-0.64,'Parigi Moutong',13);
+ return s+'</svg>';
+}
+const LGD={eq:['#e5261b','Episentrum / guncangan'],ts:['#22d3ee','Potensi tsunami'],fault:['#ffa53a','Sesar aktif (skematik)'],post:['#a98bf0','Zona pascabencana (skematik)'],pop:['#b79bff','Paparan penduduk (demo)'],hosp:['#d92d20','Fasilitas kesehatan (demo)'],sch:['#1d5fd1','Sekolah (demo)'],evac:['#178a4c','Titik evakuasi (demo)'],road:['#d6dbe5','Jalan (skematik)'],insar:['#e5482d','Deformasi InSAR (DEMO)'],gnss:['#0b1f45','Stasiun GNSS (DEMO)'],rain:['#0b1f45','Stasiun hujan (DEMO)']};
+function legendHTML(L){
+ let h='<div><b>Legenda</b></div>';
+ if(L.liq)h+=['VERY HIGH','HIGH','MEDIUM','LOW'].map(r=>`<div><i style="background:${RC[r]}"></i>Likuifaksi ${r}</div>`).join('');
+ if(L.ls)h+=`<div><i style="background:#f08a00;clip-path:polygon(50% 0,100% 100%,0 100%)"></i>Longsor (warna = level)</div>`;
+ Object.keys(LGD).forEach(k=>{if(L[k])h+=`<div><i style="background:${LGD[k][0]}"></i>${LGD[k][1]}</div>`;});
+ return h;
+}
+const LAYN=[['eq','Earthquake'],['ts','Tsunami'],['liq','Liquefaction'],['ls','Landslide'],['fault','Fault'],['pop','Population'],['hosp','Hospitals'],['sch','Schools'],['road','Roads'],['evac','Evacuation Points'],['gnss','GNSS Stations'],['rain','Rainfall Stations'],['insar','InSAR Deformation'],['post','Post-disaster Risk Zones']];
+function mapCard(id,o){
+ const L=o.layers||S.layers,h=o.h||480;
+ return `<div class="card"><div class="ch"><h3>${ic('map')} ${o.title||'Peta Risiko & Monitoring'}</h3><span class="sp"></span>${bd('sim')}${o.layers?'':`<button class="btn sm" data-a="lm" aria-label="Pilih layer" title="Pilih layer peta">${ic('layers',15)} Layer</button>`}<span class="modechip ${R()?'rp':'lv'}">${R()?'HISTORICAL REPLAY':'LIVE MONITORING'}</span></div>
+ <div class="map" id="${id}" style="height:${h}px">${mapSVG(id,o)}
+  <div class="mctrl"><button data-a="mz" data-v="in" data-id="${id}" aria-label="Perbesar" title="Perbesar">${ic('plus',16)}</button><button data-a="mz" data-v="out" data-id="${id}" aria-label="Perkecil" title="Perkecil">${ic('minus',16)}</button><button data-a="mreset" data-id="${id}" aria-label="Reset tampilan" title="Reset extent">${ic('reset',16)}</button><button data-a="mloc" data-id="${id}" aria-label="Fokus ke Palu" title="Fokus ke Palu">${ic('locate',16)}</button></div>
+  <div class="legend">${legendHTML(L)}</div>
+  ${S.lm&&!o.layers?`<div class="lmenu" role="group" aria-label="Layer peta"><b>Layer</b>${LAYN.map(([k,n])=>`<label><input type="checkbox" data-layer="${k}" ${S.layers[k]?'checked':''}> ${n}</label>`).join('')}</div>`:''}
+  <div class="pop" hidden></div></div>
+ <div class="mnote">Peta skematik gambar tangan — bukan batas administrasi resmi. Klik fitur untuk melihat sumber dan status data.${R()?'':' Mode LIVE: tidak ada peristiwa aktif yang ditampilkan.'}</div></div>`;
+}
+
+/* ================= shared components ================= */
+const NAV=[['beranda','Beranda','home'],['peta','Peta Risiko','map'],['peringatan','Peringatan Dini','bell'],['sensor','Monitoring Sensor','sensor'],['insar','InSAR','sat'],['analitik','Data & Analitik','chart'],['evaluasi','Evaluasi Pemerintah','gov'],['laporan','Laporan','file'],['pengaturan','Pengaturan','gear']];
+const PAGES={beranda:1,peta:1,peringatan:1,sensor:1,insar:1,analitik:1,evaluasi:1,laporan:1,pengaturan:1,replay:1};
+const visWarn=()=>R()?WARN.filter(w=>S.step>=w.from):[];
+function warnStatus(w){if(w.id==='W-TS')return S.step>=4?'Diseminasi':'Analisis';if(w.id==='W-LS')return'Pemantauan';return'Aktif';}
+function sevCls(s){return s==='SANGAT TINGGI'||s==='TINGGI'?'lv-red':'lv-org';}
+function stageTxt(){return `Terakhir update: ${R()?`28 Sep 2018 ${STEPS[S.step].t} WIB (replay)`:new Date().toLocaleTimeString('id-ID')}`;}
+function shell(inner){
+ const n=visWarn().length;
+ return `<div class="app ${S.nav?'navopen':''}">
+ <aside class="side ${S.nav?'open':''}" aria-label="Navigasi utama"><div class="brand"><div class="logo" style="width:38px;height:38px">${ic('shield',22)}</div><div>EWS SULTENG<small>Prototipe akademik</small></div></div>
+ <nav class="nav">${NAV.map(([k,l,i])=>`<a href="#/${k}" class="${S.page===k?'on':''}" ${S.page===k?'aria-current="page"':''}>${ic(i)} ${l}${k==='peringatan'&&n?` <span class="cnt" style="position:static;margin-left:auto">${n}</span>`:''}</a>`).join('')}<hr><a href="#/replay" class="${S.page==='replay'?'on':''}">${ic('replay')} Historical Replay</a></nav>
+ <div class="sysbox"><div><span class="dot"></span><b>SYSTEM ACTIVE</b></div><div style="margin-top:6px">${stageTxt()}</div><div style="margin-top:6px">Mode: <b>${R()?'HISTORICAL REPLAY':'LIVE MONITORING'}</b></div></div></aside>
+ <main class="main"><header class="top">
+  <button class="ibtn menu-btn" data-a="navtoggle" aria-label="Buka menu">${ic('menu')}</button>
+  <div class="logo">${ic('shield',26)}</div>
+  <div><h1>EWS SULTENG</h1><div class="sub">Sistem Peringatan Dini Gempa, Tsunami, Longsor & Likuifaksi Sulawesi Tengah<br><b>Deteksi Cepat • Respons Tepat • Masyarakat Selamat</b></div></div>
+  <span class="sp"></span>
+  <div class="search">${ic('search',16)}<input id="q" type="search" placeholder="Cari halaman, sensor, peringatan…" aria-label="Cari" autocomplete="off"><div id="sres" class="sres" hidden></div></div>
+  <button class="modechip ${R()?'rp':'lv'}" data-a="modetoggle" title="Klik untuk ganti mode">${R()?'HISTORICAL REPLAY':'LIVE MONITORING'}</button>
+  <button class="btn sm" data-a="pm" title="Mode presentasi: peta & peringatan diperbesar">${ic('pres',15)} ${S.pm?'Keluar presentasi':'Presentation Mode'}</button>
+  <div style="position:relative"><button class="ibtn" data-a="bell" aria-label="Notifikasi (${n})" title="Notifikasi">${ic('bell')}${n?`<span class="cnt">${n}</span>`:''}</button>${S.bell?`<div class="sres" style="left:auto;right:0;width:300px;top:44px">${n?visWarn().map(w=>`<button data-a="nav" data-v="peringatan"><b>${w.hz}</b> — ${w.sev}<br><small>${STEPS[w.from].t} WIB</small></button>`).join(''):'<div class="empty">Tidak ada peringatan aktif.</div>'}</div>`:''}</div>
+  <div class="prof"><div class="av">AD</div><span><b>Admin Demo</b><br>Akademik</span></div>
+ </header>${inner}</main></div>`;
+}
+function footer(){return `<div class="foot hide-pm"><span>EWS Longsor–Likuifaksi Sulawesi Tengah 2018 · Sumber: USGS · BMKG · BNPB/InaRISK · BIG Ina-CORS · Copernicus/ASF</span><span><b>PROTOTIPE AKADEMIK</b> — nilai simulasi berlabel SIMULATED; ambang bukan ambang operasional resmi.</span></div>`;}
+function replayBar(){
+ const st=STEPS[S.step];
+ return `<div class="card rbar" role="region" aria-label="Kontrol Historical Replay"><div class="ctl">
+ <button class="btn sm" data-a="prev" aria-label="Sebelumnya" title="Sebelumnya">${ic('prev',15)}</button>
+ <button class="btn sm pri" data-a="play" aria-label="${S.playing?'Jeda':'Putar'}" title="${S.playing?'Jeda':'Putar'}">${ic(S.playing?'pause':'play',15)} ${S.playing?'Pause':'Play'}</button>
+ <button class="btn sm" data-a="next" aria-label="Berikutnya" title="Berikutnya">${ic('next',15)}</button>
+ <button class="btn sm" data-a="reset" aria-label="Reset" title="Reset ke 17:00">${ic('reset',15)}</button>
+ <span class="seg" role="group" aria-label="Kecepatan">${[1,2,5].map(x=>`<button class="${S.speed===x?'on':''}" data-a="speed" data-v="${x}">${x}x</button>`).join('')}</span></div>
+ <div class="tl" role="slider" tabindex="0" aria-label="Timeline replay WIB" aria-valuemin="0" aria-valuemax="8" aria-valuenow="${S.step}" aria-valuetext="${st.t} WIB">
+  <div class="tl-track"><div class="tl-fill" style="width:${S.step/8*100}%"></div></div>
+  ${STEPS.map((x,i)=>`<button class="tick ${i<=S.step?'on':''} ${i===S.step?'cur':''}" style="left:calc(14px + (100% - 28px) * ${i/8})" data-a="step" data-v="${i}" title="${x.title}"><i></i><span>${x.t}</span></button>`).join('')}</div>
+ <div style="min-width:220px"><b>${st.t} WIB · ${st.title}</b><br>${bd(st.type==='doc'?'doc':'rec')} <small style="color:var(--mut)">Skala tidak proporsional</small></div></div>`;
+}
+function modal(title,body){const m=$('#modal');m.innerHTML=`<div class="mbox" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div style="display:flex;align-items:center"><h3>${title}</h3><span class="sp"></span><button class="ibtn" data-a="mclose" aria-label="Tutup">${ic('x')}</button></div>${body}</div>`;m.hidden=false;}
+function tbl(heads,rows,cls=''){return `<div class="tw"><table class="tbl ${cls}"><thead><tr>${heads.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.length?rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${heads.length}"><div class="empty">Tidak ada data yang cocok dengan filter.</div></td></tr>`}</tbody></table></div>`;}
+
+/* ---- banner & cards ---- */
+function binfo(){
+ const st=STEPS[S.step];
+ if(!R())return{lvl:'ok',t:'TIDAK ADA PERINGATAN AKTIF',sub:'Mode LIVE MONITORING: tidak ada peringatan aktif yang dikonfirmasi dari sumber resmi. Data sensor bersifat SIMULASI.',rows:[['Tingkat','Normal'],['Wilayah','Sulawesi Tengah'],['Waktu',new Date().toLocaleString('id-ID')],['Sumber','—'],['Status','Pemantauan rutin (demo)']]};
+ if(S.step===0)return{lvl:'ok',t:'KONDISI NORMAL',sub:'Replay 17:00 WIB — sebelum gempa. Belum ada peringatan.',rows:[['Tingkat','Normal'],['Wilayah','Sulawesi Tengah'],['Waktu','28 Sep 2018 · 17:00 WIB'],['Sumber','Rekonstruksi'],['Status','Pemantauan rutin']]};
+ if(S.step===1)return{lvl:'red',t:'GEMPA TERDETEKSI — M7.5',sub:'Analisis awal berjalan; potensi tsunami sedang dievaluasi.',rows:[['Tingkat','TINGGI'],['Wilayah','Donggala – Palu'],['Waktu','28 Sep 2018 · 17:02 WIB'],['Sumber','USGS (parameter)'],['Status','Analisis awal']]};
+ return{lvl:'red',t:'PERINGATAN DINI TSUNAMI',sub:'Potensi tsunami di pesisir Teluk Palu dan Donggala (output sistem hasil rekonstruksi).',rows:[['Tingkat','SANGAT TINGGI'],['Wilayah','Pesisir Palu–Donggala'],['Waktu','28 Sep 2018 · '+st.t+' WIB'],['Sumber','USGS + mesin aturan'],['Status',S.step>=6?'Pemantauan pasca-kejadian':S.step>=4?'Diseminasi (rekonstruksi)':'Analisis / draf']]};
+}
+function banner(){
+ const b=binfo();
+ return `<div class="banner ${b.lvl}" role="${b.lvl==='red'?'alert':'status'}"><div class="bi">${ic(b.lvl==='red'?'warn':'shield',30)}</div>
+ <div style="flex:1;min-width:240px">${R()?`<div><b style="font-size:12px;color:var(--pur)">HISTORICAL EVENT — 28 SEPTEMBER 2018</b> ${bd('rec')} <span class="chip lv-gry">bukan peringatan aktif</span></div>`:`<div>${bd('sim')}</div>`}
+ <h2>${b.t}</h2><div>${b.sub}</div><div class="meta">${b.rows.map(r=>`<span>${r[0]}: <b>${esc(r[1])}</b></span>`).join('')}</div></div>
+ <button class="btn ${b.lvl==='red'?'red':'pri'}" data-a="bdetail">Lihat Detail ${ic('chev',14)}</button></div>`;
+}
+function hz(icon,col,title,main,rows,badges,chipHtml=''){
+ return `<div class="card hz"><div class="hi" style="background:${col}">${ic(icon,24)}</div><div style="min-width:0"><h4>${title} ${chipHtml}</h4><div class="big">${main}</div><dl>${rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}</dl><div style="margin-top:6px">${badges.map(bd).join(' ')}</div></div></div>`;
+}
+function hzCards(){
+ const m=curM(),r=R(),s=S.step,q=r&&s>=1,rain=val('rain',m,r,1,1);
+ let a;
+ if(r)a=q?hz('activity','#d92d20','GEMPA','M 7.5',[['Kedalaman','20 km (USGS)'],['Episentrum','0,178°LS 119,840°BT'],['Waktu','17:02 WIB · 18:02 WITA'],['Sumber','USGS']],['off','doc']):hz('activity','#7b879b','GEMPA','Normal',[['Status','Tidak ada gempa signifikan'],['Waktu','17:00 WIB'],['Sumber','Rekonstruksi']],['rec']);
+ else if(S.live.state==='loading')a=`<div class="card hz"><div class="hi" style="background:#d92d20">${ic('activity',24)}</div><div style="flex:1"><h4>GEMPA</h4><div class="skel"></div><div class="skel" style="width:60%"></div><small><span class="spin" style="width:14px;height:14px"></span> Mengambil data BMKG…</small></div></div>`;
+ else if(S.live.state==='ok'){const g=S.live.g;a=hz('activity','#d92d20','GEMPA TERKINI','M '+esc(g.Magnitude),[['Kedalaman',esc(g.Kedalaman)],['Wilayah',esc(g.Wilayah)],['Waktu',esc(g.Tanggal+' '+g.Jam)],['Sumber','BMKG']],['rt','off']);}
+ else a=hz('activity','#7b879b','GEMPA','Normal',[['Status','Tidak ada gempa signifikan (demo)'],['Live feed','Tidak tersedia — memakai data demo']],['sim']);
+ const b=r&&s>=2?hz('wave','#1d5fd1','TSUNAMI','0,5 – 3 m',[['Est. tinggi','Model demo (bukan pengukuran)'],['Status',s>=4?'Diseminasi':'Analisis'],['Sumber','Mesin aturan']],['sim','rec']):hz('wave','#7b879b','TSUNAMI','Normal',[['Status','Tidak ada potensi tsunami'],['Sumber',r?'Rekonstruksi':'Demo']],[r?'rec':'sim']);
+ const c=r&&s>=3?hz('layers','#d97400','LIKUIFAKSI','TINGGI',[['Zona','4 lokasi terdokumentasi'],['Lokasi','Petobo, Balaroa, Jono Oge, Sibalaya'],['Pemantauan','Aktif']],['doc','rec']):hz('layers','#7b879b','LIKUIFAKSI',r?'Kerentanan statis':'Normal',[['Zona','4 lokasi terdokumentasi + zona demo'],['Pemantauan','Rutin']],['doc','sim']);
+ const d=hz('mtn','#8a5a2b','LONGSOR',r&&s>=6?'WASPADA':'SEDANG',[['Hujan',`${rain.toFixed(1)} mm/jam (demo) — di bawah ambang ${S.th.rain}`],['Lereng','12 lokasi rawan (demo)'],['Sumber','Simulasi']],['sim']);
+ return [a,b,c,d].join('');
+}
+function warnCard(){
+ const w=visWarn();
+ return `<div class="card"><div class="ch"><h3>${ic('bell')} Peringatan Dini Terbaru</h3>${w.length?`<span class="cnt" style="position:static">${w.length}</span>`:''}<span class="sp"></span><a href="#/peringatan">Lihat Semua</a></div>
+ ${w.length?w.slice().reverse().map(x=>`<div class="wcard"><div class="wi" style="background:${x.color}">${ic(x.icon,20)}</div><div style="flex:1;min-width:0"><h5>${x.hz} ${chip(x.sev,sevCls(x.sev))}</h5><small>${esc(x.loc)}</small><small>${STEPS[x.from].t} WIB · ${esc(x.src)} · ${warnStatus(x)}</small><div>${bd('rec')}</div></div><a href="#/peringatan" aria-label="Detail ${x.hz}">${ic('chev')}</a></div>`).join(''):`<div class="empty">${ic('shield',28)}<br>Tidak ada peringatan aktif.<br><small>${R()?'Geser timeline untuk memutar ulang kejadian.':'Mode LIVE: belum ada peristiwa.'}</small></div>`}</div>`;
+}
+function infoItems(){
+ const m=curM(),r=R(),s=S.step,rain=val('rain',m,r,1,1),a=[];
+ if(r&&s>=1)a.push(['activity','Data sensor seismik terdeteksi — M7.5',`Sumber: USGS`,'17:02','off']);
+ if(r&&s>=1)a.push(['sensor','Anomali GNSS terdeteksi — DEMO-GNSS-01 '+fmt('gnss',val('gnss',m,r,1,1))+' mm','Sumber: sensor simulasi',STEPS[Math.max(1,0)].t,'sim']);
+ a.push(['sensor',`Curah hujan ${rain.toFixed(1)} mm/jam — di bawah ambang`,'Sumber: stasiun hujan simulasi',r?STEPS[s].t:'sekarang','sim']);
+ if(r&&s>=7)a.push(['sat','Update InSAR — interferogram DEMO tersedia','Sumber: visualisasi demo (bukan Sentinel-1)','18:00','sim']);
+ if(r&&s>=8)a.push(['gov','Status rehabilitasi & rekonstruksi — lihat Evaluasi (bukti belum diverifikasi)','Sumber: register evaluasi','20:00','rec']);
+ if(!r)a.push(['sensor','Semua sensor DEMO berstatus normal','Sumber: simulasi','sekarang','sim']);
+ return a;
+}
+function infoCard(){
+ return `<div class="card hide-pm"><div class="ch"><h3>${ic('file')} Informasi Terkini</h3><span class="sp"></span><a href="#/analitik">Lihat Semua</a></div>${infoItems().map(i=>`<div class="wcard"><div class="wi" style="background:var(--blue)">${ic(i[0],18)}</div><div style="flex:1"><b style="font-size:13px">${i[1]}</b><small>${i[2]} · ${i[3]}${R()?' WIB':''}</small></div>${bd(i[4])}</div>`).join('')}</div>`;
+}
+function quickCard(){
+ const q=[['map','Lihat Peta Risiko','nav','peta'],['bell','Cek Peringatan Dini','nav','peringatan'],['chart','Unduh Laporan','nav','laporan'],['book','Panduan & Edukasi','guide','']];
+ return `<div class="card hide-pm"><div class="ch"><h3>Aksi Cepat</h3></div><div class="pad" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${q.map(x=>`<button class="btn" data-a="${x[2]}" data-v="${x[3]}">${ic(x[0],16)} ${x[1]}</button>`).join('')}</div></div>`;
+}
+function govSummary(){
+ const tot=GOV.length,ver=GOV.filter(g=>g.verified).length;
+ return `<div class="kpi"><div><b>${tot}</b><small>Aktivitas tercatat</small></div><div><b>${ver}</b><small>Bukti terverifikasi</small></div><div><b>${tot-ver}</b><small>Perlu verifikasi</small></div></div><p style="font-size:12px;color:var(--mut)">Tidak ada skor kinerja. Evaluasi berbasis bukti: ${PHASES.length} tahapan, status dokumen per aktivitas.</p><a class="btn sm" href="#/evaluasi">Lihat Evaluasi ${ic('chev',14)}</a>`;
+}
+const TABS=[['eq','Gempa'],['ts','Tsunami'],['rain','Curah Hujan'],['gnss','GNSS'],['insar','InSAR'],['gw','Muka Air Tanah']];
+function insChart(h){const pts=INS;return lineChart('c-ins',{pts,unit:'cm',dec:1,base:0,thv:-10,thl:'Ambang deformasi (demo)',an:v=>v<-10,cur:null,name:'LOS InSAR demo',h});}
+function chartCard(){
+ const t=S.tab,K=KIND[t];
+ const rs=t==='insar'?'':`<span class="seg" role="group" aria-label="Rentang waktu">${RNG().map((r,i)=>`<button class="${S.rangeI===i?'on':''}" data-a="range" data-v="${i}">${r.l}</button>`).join('')}</span>`;
+ let body,meta;
+ if(t==='insar'){body=insChart();meta=`<b>Deformasi LOS kumulatif (DEMO)</b> ${bd('sim')}<br><small>Sumber: visualisasi demo, bukan pengukuran Sentinel-1.</small>`;}
+ else{const v=val(t,curM(),R(),1,1);body=chartFor('c-home-'+t,t,1,1);meta=`<b>${K.l}</b> ${bd(K.bd)}<br>Nilai saat ini: <b>${fmt(t,v)} ${K.u}</b> · Baseline: ${K.base} ${K.u}<br><small>Sumber: ${K.src}</small>`;}
+ return `<div class="card"><div class="ch"><h3>${ic('chart')} Grafik Monitoring</h3><span class="sp"></span><div class="tabs" role="tablist">${TABS.map(([k,l])=>`<button role="tab" aria-selected="${S.tab===k}" class="${S.tab===k?'on':''}" data-a="tab" data-v="${k}">${l}</button>`).join('')}</div></div>
+ <div class="pad twocol"><div><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px"><div style="font-size:12px;flex:1">${meta}</div>${rs}</div>${body}${chartLegend()}</div>
+ <div class="hide-pm"><h4 style="margin:0 0 8px">${ic('gov',16)} Ringkasan Evaluasi</h4>${govSummary()}</div></div></div>`;
+}
+
+/* ================= pages ================= */
+function pBeranda(){
+ return `${banner()}${R()?replayBar():''}<div class="g4">${hzCards()}</div>
+ <div class="home-grid"><div class="col">${mapCard('mapH',{h:S.pm?560:470})}${chartCard()}</div><div class="col">${warnCard()}${infoCard()}${quickCard()}</div></div>${footer()}`;
+}
+function riskLayers(){
+ const t=S.riskTab,b={eq:{eq:1,fault:1},ts:{ts:1},liq:{liq:1},ls:{ls:1},multi:{eq:1,ts:1,liq:1,ls:1,fault:1},tata:{post:1,liq:1}}[t]||{};
+ const L={...b};if(S.rx.crit){L.hosp=1;L.sch=1;L.evac=1;}if(S.rx.road)L.road=1;if(S.rx.pop)L.pop=1;return L;
+}
+function pPeta(){
+ const tabs=[['eq','Gempa'],['ts','Tsunami'],['liq','Likuifaksi'],['ls','Longsor'],['multi','Multi-Hazard'],['tata','Tata Ruang Pascabencana']];
+ const kabs=['Kota Palu','Donggala','Sigi','Parigi Moutong'];
+ const kecs=[...new Set([...LIQ,...LSL].filter(x=>!S.flt.kab||x.kab===S.flt.kab).map(x=>x.kec))].sort();
+ const feats=[...LIQ.map(x=>({n:x.n,hz:'Likuifaksi',risk:x.risk,kab:x.kab,kec:x.kec,b:x.doc?'doc':'sim'})),...LSL.map(x=>({n:x.id,hz:'Longsor',risk:x.risk,kab:x.kab,kec:x.kec,b:'sim'}))].filter(pass).filter(f=>S.riskTab==='liq'?f.hz==='Likuifaksi':S.riskTab==='ls'?f.hz==='Longsor':true);
+ const cnt=r=>feats.filter(f=>f.risk===r).length;
+ const popSum=POP.filter(p=>!S.flt.kab||p.kab===S.flt.kab).reduce((a,p)=>a+p.idx,0);
+ const crit=[...HOSP,...SCH,...EVAC].filter(x=>!S.flt.kab||x.kab===S.flt.kab).length;
+ return `<h2 class="pt">Peta Risiko Sulawesi Tengah</h2><p class="lead">Kategori risiko ditampilkan sesuai sumber; lihat tabel pemetaan kategori di bawah. ${bd('sim')}</p>
+ <div class="tabs" style="margin-bottom:10px" role="tablist">${tabs.map(([k,l])=>`<button role="tab" aria-selected="${S.riskTab===k}" class="${S.riskTab===k?'on':''}" data-a="rtab" data-v="${k}">${l}</button>`).join('')}</div>
+ <div class="card pad frm" style="margin-bottom:12px"><label>Kabupaten/Kota<select data-flt="kab"><option value="">Semua</option>${kabs.map(k=>`<option ${S.flt.kab===k?'selected':''}>${k}</option>`).join('')}</select></label>
+ <label>Kecamatan<select data-flt="kec"><option value="">Semua</option>${kecs.map(k=>`<option ${S.flt.kec===k?'selected':''}>${k}</option>`).join('')}</select></label>
+ <label>Hazard<select data-rt="1">${tabs.map(([k,l])=>`<option value="${k}" ${S.riskTab===k?'selected':''}>${l}</option>`).join('')}</select></label>
+ <label>Level risiko<select data-flt="risk"><option value="">Semua</option>${['LOW','MEDIUM','HIGH','VERY HIGH'].map(k=>`<option ${S.flt.risk===k?'selected':''}>${k}</option>`).join('')}</select></label>
+ <label style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" data-rx="crit" ${S.rx.crit?'checked':''}> Fasilitas kritis</label>
+ <label style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" data-rx="road" ${S.rx.road?'checked':''}> Infrastruktur jalan</label>
+ <label style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" data-rx="pop" ${S.rx.pop?'checked':''}> Penduduk</label>
+ <button class="btn sm" data-a="fltreset">Reset filter</button></div>
+ <div class="home-grid"><div class="col">${mapCard('mapP',{layers:riskLayers(),free:true,h:540,title:'Peta Risiko — '+tabs.find(t=>t[0]===S.riskTab)[1]})}</div>
+ <div class="col"><div class="card pad"><h4 style="margin:0 0 8px">Ringkasan (sesuai filter)</h4><div class="kpi">${['LOW','MEDIUM','HIGH','VERY HIGH'].map(r=>`<div><b style="color:${RC[r]}">${cnt(r)}</b><small>${r}</small></div>`).join('')}<div><b>${popSum}</b><small>Indeks paparan penduduk ${bd('sim')}</small></div><div><b>${crit}</b><small>Fasilitas kritis ${bd('sim')}</small></div></div><p style="font-size:12px;color:var(--mut)">Luas area terdampak: belum tersedia — isi dari BNPB/InaRISK.</p></div>
+ <div class="card"><div class="ch"><h3>Daftar zona</h3></div>${tbl(['Zona','Bahaya','Risiko','Wilayah','Data'],feats.map(f=>[esc(f.n),f.hz,`<span style="color:${RC[f.risk]}">●</span> ${f.risk}`,esc(f.kab+' / '+f.kec),bd(f.b)]))}</div>
+ <div class="card pad hide-print"><h4 style="margin:0 0 6px">Pemetaan kategori sumber</h4>${tbl(['Kategori sumber (InaRISK, 3 kelas)','Ditampilkan sebagai'],[['Rendah','LOW'],['Sedang','MEDIUM'],['Tinggi','HIGH'],['(tidak ada di sumber 3 kelas)','VERY HIGH — hanya penanda prototipe untuk lokasi terdokumentasi, bukan klasifikasi resmi']])}</div></div></div>${footer()}`;
+}
+function rules(){
+ const m=curM(),r=R(),q=r&&m>=0,gn=val('gnss',m,r,1,1),rain=val('rain',m,r,1,1),T=S.th,mmi=8;
+ return [
+ {id:'R1',t:`IF magnitudo ≥ <b>${T.eqMag}</b> THEN peringatan gempa`,ok:q&&QUAKE.mag>=T.eqMag,ev:q?`M${QUAKE.mag} vs ambang ${T.eqMag}`:'Tidak ada gempa'},
+ {id:'R2',t:`IF model tsunami berpotensi (M ≥ <b>${T.tsMag}</b> dan kedalaman ≤ <b>${T.tsDepth}</b> km) THEN peringatan tsunami`,ok:q&&QUAKE.mag>=T.tsMag&&QUAKE.depth<=T.tsDepth,ev:q?`M${QUAKE.mag}, ${QUAKE.depth} km`:'Tidak ada gempa'},
+ {id:'R3',t:`IF GNSS ≥ <b>${T.gnss}</b> mm AND hujan ≥ <b>${T.rain}</b> mm/jam AND lereng = HIGH THEN naikkan risiko longsor`,ok:gn>=T.gnss&&rain>=T.rain,ev:`GNSS ${gn.toFixed(1)} mm · hujan ${rain.toFixed(1)} mm/jam · lereng HIGH (LS-04, demo)`},
+ {id:'R4',t:`IF intensitas ≥ MMI <b>${T.mmi}</b> AND kerentanan likuifaksi = HIGH THEN naikkan risiko likuifaksi`,ok:q&&mmi>=T.mmi,ev:q?`MMI ${mmi} (perkiraan rekonstruksi) · kerentanan HIGH`:'Tidak ada gempa'}];
+}
+const PIPE=['DATA ACQUISITION','DATA INTEGRATION','ANOMALY DETECTION','THRESHOLD ANALYSIS','RISK CLASSIFICATION','EARLY WARNING','PUBLIC DISSEMINATION','GOVERNMENT RESPONSE','EVALUATION'];
+const PROG=[0,2,4,5,6,7,8,8,8];
+function pPeringatan(){
+ const prog=R()?PROG[S.step]:-1;
+ const src=[['BMKG','Gempabumi, peringatan tsunami'],['BNPB/InaRISK','Peta risiko, dampak'],['BIG Ina-CORS','GNSS kontinu'],['Sentinel-1','Deformasi InSAR'],['Curah hujan','Stasiun hujan'],['Muka air tanah','Sensor piezometer'],['Sensor IoT','Seismik, deformasi lokal']];
+ const nm=(k,l,st=1)=>`<label>${l}<input class="num" type="number" step="${st}" data-th="${k}" value="${S.th[k]}" ${S.admin?'':'disabled'}></label>`;
+ return `<h2 class="pt">Detection & Decision Engine</h2><p class="lead">Nilai ambang adalah parameter demo akademik yang dapat dikonfigurasi — <b>bukan ambang peringatan operasional resmi</b>.</p>
+ ${R()?replayBar():''}
+ <div class="card"><div class="ch"><h3>Alur pemrosesan</h3><span class="sp"></span>${bd('rec')}</div><div class="pad pipe">${PIPE.map((p,i)=>`<div class="pn ${i<=prog?'on':''} ${i===prog?'cur':''}"><b>${p}</b>${i===prog?'Tahap berjalan':i<prog?'Selesai':'Menunggu'}</div>`).join('')}</div></div>
+ <div class="twocol" style="margin-top:14px"><div class="card"><div class="ch"><h3>Sumber masukan</h3></div>${tbl(['Sumber','Data','Status di prototipe'],src.map(s=>[`<b>${s[0]}</b>`,s[1],`${bd('sim')} tanpa tautan langsung`]))}</div>
+ <div class="card"><div class="ch"><h3>Status rule engine</h3></div><div class="pad"><div class="kpi"><div><b>${rules().filter(r=>r.ok).length}/4</b><small>Aturan terpenuhi</small></div><div><b>${R()?STEPS[S.step].t:'—'}</b><small>Waktu evaluasi (WIB)</small></div></div></div></div></div>
+ <div class="card" style="margin-top:14px"><div class="ch"><h3>Aturan prototipe & ambang</h3><span class="sp"></span><label style="font-size:12px"><input type="checkbox" data-admin="1" ${S.admin?'checked':''}> Mode admin demo (boleh edit)</label><button class="btn sm" data-a="threset">Reset default</button></div>
+ <div class="pad frm">${nm('eqMag','Magnitudo gempa',.1)}${nm('tsMag','Magnitudo tsunami',.1)}${nm('tsDepth','Kedalaman maks. (km)')}${nm('gnss','GNSS (mm)',.5)}${nm('rain','Hujan (mm/jam)')}${nm('mmi','MMI',.5)}${nm('pga','PGA (gal)')}${nm('tsLvl','Anomali laut (m)',.1)}${nm('gwDrop','Kenaikan m.a.t. (m)',.1)}</div>
+ ${tbl(['Aturan','Evaluasi saat ini','Hasil'],rules().map(r=>[`<b>${r.id}</b> ${r.t}`,esc(r.ev),r.ok?chip('TERPENUHI','lv-red'):chip('TIDAK TERPENUHI','lv-gry')]))}
+ <div class="pad" style="font-size:12px;color:var(--mut)">Threshold values are configurable academic/demo parameters. Hasil R3 sengaja tidak terpenuhi pada skenario ini karena hujan simulasi rendah; ubah ambang hujan untuk melihat perubahan.</div></div>${footer()}`;
+}
+function pSensor(){
+ const types=[['GNSS','gnss','mm'],['Curah Hujan','rain','mm/jam'],['Muka Air Tanah','gw','m'],['Seismik','seis','gal'],['Deformasi Permukaan','disp','mm']];
+ const m=curM(),cur=SENS.find(s=>s.id===S.sel)||SENS[0];
+ const cards=types.map(([tn,k,u])=>{const l=SENS.filter(s=>s.kind===k),on=l.filter(s=>!s.offline),rep=on[0],v=sAt(rep,m),w=l.some(s=>sStat(s)==='WARNING');return `<button class="card hz" style="text-align:left;width:100%;border-color:${S.sel&&cur.kind===k?'var(--blue)':'var(--line)'}" data-a="selkind" data-v="${l[0].id}" title="Lihat ${tn}"><div style="min-width:0"><h4>${tn} ${chip(w?'WARNING':'NORMAL',w?'lv-org':'lv-grn')}</h4><div class="big">${fmt(k,v)} <small style="font-size:13px">${u}</small></div><dl><dt>Stasiun</dt><dd>${rep.id}</dd><dt>Online</dt><dd>${on.length}/${l.length}</dd><dt>Waktu</dt><dd>${nowTxt()}</dd><dt>Kualitas</dt><dd>${rep.q}</dd></dl>${bd('sim')} <b style="font-size:10px;color:var(--org)">SIMULATED SENSOR DATA</b></div></button>`;}).join('');
+ const v=sAt(cur,m);
+ return `<h2 class="pt">Monitoring Sensor</h2><p class="lead">Semua stasiun berawalan DEMO- adalah data simulasi, bukan pengamatan nyata.</p>${R()?replayBar():''}
+ <div class="g4" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))">${cards}</div>
+ <div class="home-grid"><div class="col">${mapCard('mapS',{allSensors:true,h:470,title:'Peta Stasiun Sensor'})}
+ <div class="card"><div class="ch"><h3>Detail: ${cur.id}</h3>${chip(sStat(cur),stCls[sStat(cur)])}<span class="sp"></span><span class="seg">${RNG().map((r,i)=>`<button class="${S.rangeI===i?'on':''}" data-a="range" data-v="${i}">${r.l}</button>`).join('')}</span></div><div class="pad">
+  ${cur.offline?`<div class="empty">Stasiun OFFLINE — tidak ada data. Periksa catu daya/komunikasi.</div>`:chartFor('c-sens',cur.kind,cur.o,cur.f)}${chartLegend()}
+  <div class="meta"><span>Nilai: <b>${fmt(cur.kind,v)} ${cur.unit}</b></span><span>Ambang: <b>${KIND[cur.kind].th().toFixed(1)} ${cur.unit}</b></span><span>Kualitas data: <b>${cur.q}</b></span><span>Sumber: <b>SIMULASI</b></span>${bd('sim')}</div></div></div></div>
+ <div class="card"><div class="ch"><h3>Daftar stasiun</h3></div>${tbl(['Stasiun','Jenis','Wilayah','Nilai','Status','Kualitas'],SENS.map(s=>[`<button class="btn sm" data-a="sel" data-v="${s.id}">${s.id}</button>`,s.type,esc(s.kab),s.offline?'—':fmt(s.kind,sAt(s,m))+' '+s.unit,chip(sStat(s),stCls[sStat(s)]),s.q]))}</div></div>${footer()}`;
+}
+function pInsar(){
+ const pipe=['Sentinel-1','SLC','Coregistration','Interferogram','Phase Unwrapping','Time Series','Deformation Map','Dashboard'];
+ return `<h2 class="pt">Satellite Deformation Monitoring</h2><p class="lead">Konsep sumber: Sentinel-1 (C-band). Visualisasi di bawah adalah <b>DEMO</b> — bukan pengukuran Sentinel-1 yang sebenarnya. ${bd('sim')}</p>
+ <div class="g4" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+ ${['before','after','defo'].map((k,i)=>`<div class="card"><div class="ch"><h3>${['Before Event','After Event','Deformation'][i]}</h3><span class="sp"></span>${bd('sim')}</div><div class="pad cvw"><canvas id="cv-${k}" class="cv" width="320" height="280" role="img" aria-label="${['Fase sebelum kejadian (demo)','Fase sesudah kejadian (demo)','Peta deformasi LOS (demo)'][i]}"></canvas><span class="wm">DEMO — bukan data Sentinel-1</span></div></div>`).join('')}</div>
+ <div class="twocol"><div class="card"><div class="ch"><h3>Time Series LOS (DEMO)</h3></div><div class="pad">${insChart()}${chartLegend()}</div></div>
+ <div class="card"><div class="ch"><h3>Metadata</h3></div>${tbl(['Parameter','Nilai'],[['Tanggal akuisisi','Belum ditautkan — isi dari katalog Copernicus/ASF'],['Satelit','Sentinel-1 (konseptual)'],['Orbit / pass','DEMO (belum ditentukan)'],['Status pemrosesan','DEMO — tidak ada pemrosesan SLC nyata'],['Deformasi','−24 cm (DEMO, LOS)'],['Unit','cm (line-of-sight)'],['Sumber','Copernicus Data Space · ASF']])}</div></div>
+ <div class="card" style="margin-top:14px"><div class="ch"><h3>Pipeline pemrosesan</h3></div><div class="pad pipe">${pipe.map((p,i)=>`<div class="pn"><b>${p}</b>${i===0?'Akuisisi':i===pipe.length-1?'Publikasi':'Tahap '+(i+1)}</div>`).join('')}</div></div>${footer()}`;
+}
+function drawInsar(){
+ const W=320,H=280,dm=(x,y)=>{const fx=W*.5+Math.sin(y/H*3)*22+(y-H/2)*.25,t=Math.tanh((x-fx)/28),env=Math.exp(-Math.pow((y-H/2)/(H*.42),2));return 24*t*env+(Math.sin(x/37)*Math.cos(y/29))*1.2;};
+ const hsv=(h,s,v)=>{const i=Math.floor(h*6),f=h*6-i,p=v*(1-s),q=v*(1-f*s),t=v*(1-(1-f)*s);return [[v,t,p],[q,v,p],[p,v,t],[p,q,v],[t,p,v],[v,p,q]][i%6].map(x=>Math.round(x*255));};
+ const div=d=>{const a=Math.max(-1,Math.min(1,d/24));return a<0?[255,Math.round(255*(1+a*.85)),Math.round(255*(1+a))]:[Math.round(255*(1-a)),Math.round(255*(1-a*.6)),255];};
+ ['before','after','defo'].forEach(k=>{const c=$('#cv-'+k);if(!c)return;const g=c.getContext('2d'),im=g.createImageData(W,H);
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){let rgb;const i=(y*W+x)*4;
+   if(k==='before'){const ph=(Math.sin(x/53)*Math.cos(y/47)*.3+rnd(x*7+y*13)*.12+.5)%1;rgb=hsv(Math.abs(ph),.55,.85);}
+   else if(k==='after'){const ph=((dm(x,y)/2.77)%1+1)%1;rgb=hsv(ph,.85,.95);}
+   else rgb=div(dm(x,y));
+   im.data[i]=rgb[0];im.data[i+1]=rgb[1];im.data[i+2]=rgb[2];im.data[i+3]=255;}
+  g.putImageData(im,0,0);});
+}
+function pReplay(){
+ const st=STEPS[S.step],m=st.m,q=S.step>=1;
+ const feed=visWarn();
+ return `<h2 class="pt">HISTORICAL REPLAY — 28 SEPTEMBER 2018</h2><p class="lead">Waktu dalam WIB (UTC+7); Palu memakai WITA (+1 jam). ${bd('doc')} = fakta terdokumentasi · ${bd('rec')} = output sistem hasil rekonstruksi · ${bd('sim')} = data simulasi.</p>
+ ${replayBar()}
+ <div class="card pad" style="margin-bottom:14px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h3 style="margin:0">${st.t} WIB — ${st.title}</h3>${bd(st.type==='doc'?'doc':'rec')}</div><p style="margin:6px 0">${st.desc}</p><p style="margin:0;font-size:12.5px;color:var(--mut)"><b>Catatan sumber:</b> ${st.note}</p><p style="margin:6px 0 0"><b>Tindakan pengambil keputusan (skenario):</b> ${st.act}</p></div>
+ <div class="g4">${hzCards()}</div>
+ <div class="home-grid"><div class="col">${mapCard('mapR',{h:480})}<div class="card"><div class="ch"><h3>Sensor simulasi</h3>${bd('sim')}<span class="sp"></span><div class="tabs">${[['gnss','GNSS'],['gw','Air tanah'],['seis','Seismik'],['eq','Gempa']].map(([k,l])=>`<button class="${S.tab===k?'on':''}" data-a="tab" data-v="${k}">${l}</button>`).join('')}</div></div><div class="pad">${chartFor('c-rp-'+(['gnss','gw','seis','eq'].includes(S.tab)?S.tab:'gnss'),['gnss','gw','seis','eq'].includes(S.tab)?S.tab:'gnss',1,1)}${chartLegend()}</div></div></div>
+ <div class="col">${warnCard()}<div class="card"><div class="ch"><h3>Timeline respons</h3></div><div class="pad"><ul class="tlv">${STEPS.map((x,i)=>`<li class="${i<S.step?'done':i===S.step?'cur':'fut'}"><span class="n"></span><div><b>${x.t}</b> ${x.title} ${bd(x.type==='doc'?'doc':'rec')}</div></li>`).join('')}</ul></div></div>
+ <div class="card pad"><h4 style="margin:0 0 6px">Status respons pemerintah</h4><p style="margin:0">${st.gov}</p><a href="#/evaluasi">Lihat register evaluasi</a></div></div></div>${footer()}`;
+}
+function pEvaluasi(){
+ const nodes=['28 Sep 2018','Emergency Response','Evacuation','Shelter','Rehabilitation','Reconstruction','Spatial Planning','EWS Improvement'];
+ return `<h2 class="pt">Evaluasi Respons Pemerintah Pascabencana</h2><div class="card pad" style="background:var(--org-s);border-color:transparent;margin-bottom:12px"><b>Tidak ada skor kinerja.</b> Halaman ini adalah register bukti. Semua baris bersifat <b>dilaporkan</b> dan <b>belum diverifikasi</b>: tautkan dokumen sumber (SK, laporan BNPB, dsb.) sebelum dipakai sebagai dasar analisis. ${bd('rec')}</div>
+ <div class="card"><div class="ch"><h3>Timeline pascabencana</h3></div><div class="pad pipe">${nodes.map(n=>`<div class="pn"><b>${n}</b></div>`).join('')}</div></div>
+ ${PHASES.map((p,i)=>{const rows=GOV.filter(g=>g.phase===p);return `<div class="card" style="margin-top:14px"><div class="ch"><h3>${i+1}. ${p}</h3><span class="sp"></span>${chip(rows.length+' aktivitas · 0 terverifikasi','lv-gry')}</div>${tbl(['Aktivitas','Institusi','Tanggal','Lokasi','Status','Bukti / sumber','Catatan'],rows.map(g=>[g.act,g.agency,g.date,g.loc,g.status,`<a href="${g.evUrl}" target="_blank" rel="noopener">${g.ev}</a><br>${chip('BUKTI BELUM DIVERIFIKASI','lv-org')}`,g.note]))}</div>`;}).join('')}${footer()}`;
+}
+/* ---- data explorer ---- */
+const HZN={gnss:'Deformasi',disp:'Deformasi',rain:'Curah Hujan',gw:'Muka Air Tanah',seis:'Gempa'};
+let ROWS=null;
+function buildRows(){
+ const a=[];
+ STEPS.forEach((st,i)=>{
+  if(i>=1)a.push({t:`2018-09-28T${st.t}:00+07:00`,hz:'Gempa',loc:'Donggala – Palu',reg:'Donggala',v:'7.5',u:'M',src:'USGS',st:'DOCUMENTED',q:'RESMI',k:'doc',url:QUAKE.sourceUrl,ds:'Katalog gempa USGS',sim:false});
+  WARN.filter(w=>w.from===i).forEach(w=>a.push({t:`2018-09-28T${st.t}:00+07:00`,hz:w.hz,loc:w.loc,reg:'Kota Palu',v:w.sev,u:'level',src:'Rekonstruksi mesin aturan',st:'RECONSTRUCTED',q:'—',k:'rec',url:'(tidak ada)',ds:'Seed lokal prototipe',sim:true}));
+  SENS.forEach(s=>{const v=s.offline?null:val(s.kind,st.m,true,s.o,s.f);a.push({t:`2018-09-28T${st.t}:00+07:00`,hz:HZN[s.kind],loc:s.id,reg:s.kab,v:v==null?'':v.toFixed(KIND[s.kind].dec),u:s.unit,src:'SIMULATED SENSOR DATA',st:s.offline?'OFFLINE':isAn(s.kind,v)?'WARNING':'NORMAL',q:s.q,k:'sim',url:'(tidak ada)',ds:'Seed lokal prototipe',sim:true});});
+ });
+ return a.sort((x,y)=>x.t<y.t?-1:1);
+}
+function filtRows(F){
+ ROWS=ROWS||buildRows();
+ return ROWS.filter(r=>(!F.hz||r.hz===F.hz)&&(!F.reg||r.reg===F.reg)&&(!F.src||r.src===F.src)&&(!F.st||r.st===F.st)&&(!F.rs||r.k===F.rs)&&(!F.date||r.t.startsWith(F.date))&&(!F.from||r.t.slice(0,10)>=F.from)&&(!F.to||r.t.slice(0,10)<=F.to));
+}
+const toCSV=rows=>['timestamp,hazard,location,value,unit,source,status,data_quality,source_url,dataset_name,retrieved_at,is_simulated',...rows.map(r=>[r.t,r.hz,r.loc,r.v,r.u,r.src,r.st,r.q,r.url,r.ds,'seed-lokal',r.sim].map(x=>`"${String(x).replace(/"/g,'""')}"`).join(','))].join('\n');
+const toJSON=rows=>JSON.stringify(rows.map(r=>({timestamp:r.t,hazard:r.hz,location:r.loc,value:r.v,unit:r.u,source:r.src,status:r.st,dataQuality:r.q,source_url:r.url,dataset_name:r.ds,retrieved_at:'seed-lokal',is_simulated:r.sim})),null,2);
+function pAnalitik(){
+ const F=S.an,rows=filtRows(F),PG=15,pages=Math.max(1,Math.ceil(rows.length/PG)),pg=Math.min(F.pg,pages-1),sl=rows.slice(pg*PG,pg*PG+PG);
+ const opt=(k,arr)=>`<option value="">Semua</option>${arr.map(x=>`<option ${F[k]===x?'selected':''}>${x}</option>`).join('')}`;
+ ROWS=ROWS||buildRows();
+ const uniq=k=>[...new Set(ROWS.map(r=>r[k]))];
+ const bins=[];for(let b=0;b<6;b++){let c=0;for(let m=b*30;m<b*30+30;m++)if(val('eq',m,true,0,1)>=3.5)c++;bins.push({l:hm(1022+b*30),v:c,c:'var(--org)'});}
+ const prog=STEPS.map((x,i)=>({l:x.t,v:WARN.filter(w=>w.from<=i).length,c:'var(--red)'}));
+ const anT=['gnss','rain','gw','seis','disp'].map(k=>({l:HZN[k]==='Deformasi'?k.toUpperCase():k,v:SENS.filter(s=>s.kind===k&&sStat(s)==='WARNING').length,c:'var(--org)'}));
+ const aff=['Kota Palu','Donggala','Sigi','Parigi Moutong'].map(k=>({l:k.replace('Kota ',''),v:[...LIQ,...LSL].filter(x=>x.kab===k).length,c:'var(--pur)'}));
+ return `<h2 class="pt">Data & Analytics</h2><p class="lead">Penjelajah data dengan provenance per catatan (source, source_url, retrieved_at, dataset_name, is_simulated).</p>
+ <div class="card pad frm"><label>Tanggal<input type="date" data-an="date" value="${F.date}"></label><label>Hazard<select data-an="hz">${opt('hz',uniq('hz'))}</select></label><label>Wilayah<select data-an="reg">${opt('reg',uniq('reg'))}</select></label><label>Sumber<select data-an="src">${opt('src',uniq('src'))}</select></label><label>Status<select data-an="st">${opt('st',uniq('st'))}</select></label>
+ <label>Real/simulated<select data-an="rs"><option value="">Semua</option>${[['doc','Terdokumentasi/resmi'],['sim','Simulasi'],['rec','Rekonstruksi'],['rt','Real-time']].map(([k,l])=>`<option value="${k}" ${F.rs===k?'selected':''}>${l}</option>`).join('')}</select></label>
+ <button class="btn sm" data-a="anreset">Reset</button><span class="sp"></span><button class="btn sm" data-a="export" data-v="csv|an">Export CSV</button><button class="btn sm" data-a="export" data-v="json|an">Export JSON</button></div>
+ <div class="card"><div class="ch"><h3>${rows.length} catatan</h3><span class="sp"></span><small>Halaman ${pg+1}/${pages}</small><button class="btn sm" data-a="pg" data-v="-1" ${pg<=0?'disabled':''}>‹</button><button class="btn sm" data-a="pg" data-v="1" ${pg>=pages-1?'disabled':''}>›</button></div>
+ ${tbl(['Timestamp','Hazard','Lokasi','Nilai','Unit','Sumber','Status','Kualitas','Aksi'],sl.map((r,i)=>[r.t.replace('T',' ').slice(0,16)+' WIB',r.hz,esc(r.loc),r.v,r.u,esc(r.src)+'<br>'+bd(r.k==='doc'?'doc':r.k==='rec'?'rec':'sim'),r.st,r.q,`<button class="btn sm" data-a="view" data-v="${pg*PG+i}">View</button>`]))}</div>
+ <div class="twocol" style="margin-top:14px"><div class="card"><div class="ch"><h3>Frekuensi gempa susulan M≥3,5 per 30 mnt</h3>${bd('sim')}</div><div class="pad">${barChart(bins,'kejadian')}</div></div>
+ <div class="card"><div class="ch"><h3>Curah hujan</h3>${bd('sim')}</div><div class="pad">${chartFor('c-an-rain','rain',1,1,200)}</div></div>
+ <div class="card"><div class="ch"><h3>Peringatan aktif per tahap</h3>${bd('rec')}</div><div class="pad">${barChart(prog,'peringatan')}</div></div>
+ <div class="card"><div class="ch"><h3>Anomali sensor (saat ini)</h3>${bd('sim')}</div><div class="pad">${barChart(anT,'stasiun')}</div></div>
+ <div class="card"><div class="ch"><h3>Deformasi GNSS</h3>${bd('sim')}</div><div class="pad">${chartFor('c-an-gnss','gnss',1,1,200)}</div></div>
+ <div class="card"><div class="ch"><h3>Zona/lokasi rawan per wilayah</h3>${bd('sim')}</div><div class="pad">${barChart(aff,'lokasi')}</div></div></div>${footer()}`;
+}
+function pLaporan(){
+ const r=S.rep,rows=filtRows(r);
+ const sel=(k,arr)=>`<select data-rep="${k}"><option value="">Semua</option>${arr.map(x=>`<option ${r[k]===x?'selected':''}>${x}</option>`).join('')}</select>`;
+ ROWS=ROWS||buildRows();
+ const form=`<div class="card pad frm hide-print"><label>Dari<input type="date" data-rep="from" value="${r.from}"></label><label>Sampai<input type="date" data-rep="to" value="${r.to}"></label><label>Hazard${sel('hz',[...new Set(ROWS.map(x=>x.hz))])}</label><label>Wilayah${sel('reg',[...new Set(ROWS.map(x=>x.reg))])}</label><label>Sumber${sel('src',[...new Set(ROWS.map(x=>x.src))])}</label></div>
+ <div class="card pad hide-print" style="margin-bottom:12px"><b>Bagian laporan</b><div style="display:flex;gap:6px 16px;flex-wrap:wrap;margin-top:6px">${SECS.map(s=>`<label><input type="checkbox" data-repsec="${s}" ${r.sec[s]?'checked':''}> ${s}</label>`).join('')}</div>
+ <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" data-a="gen">Generate report</button><button class="btn" data-a="print">Print</button><button class="btn" data-a="export" data-v="csv|rep">Export CSV</button><button class="btn" data-a="export" data-v="json|rep">Export JSON</button></div></div>`;
+ if(!r.done)return `<h2 class="pt">Laporan</h2><p class="lead">Pilih rentang, filter, dan bagian laporan lalu klik Generate report.</p>${form}<div class="card"><div class="empty">Laporan belum dibuat. Klik <b>Generate report</b>.</div></div>${footer()}`;
+ const S_=n=>r.sec[n];
+ const q=rows.filter(x=>x.hz==='Gempa'&&x.src==='USGS')[0];
+ return `<h2 class="pt">Laporan</h2>${form}<div class="card pad" id="report"><h2 style="margin-top:0">Laporan Situasi — Skenario Sulawesi Tengah, 28 September 2018</h2><p>${bd('sim')} ${bd('rec')} Prototipe akademik. Dibuat: ${new Date().toLocaleString('id-ID')} · Filter: ${r.from}–${r.to}, hazard ${r.hz||'semua'}, wilayah ${r.reg||'semua'}, sumber ${r.src||'semua'} · ${rows.length} catatan.</p>
+ ${S_('Executive summary')?`<h3>Executive summary</h3><p>Skenario mereplikasi alur EWS terpadu untuk gempa M7.5 tanggal 28 September 2018 (parameter USGS). Output sistem (peringatan, aturan) adalah <b>rekonstruksi</b>; nilai sensor adalah <b>simulasi</b>. Evaluasi respons pemerintah disajikan sebagai register bukti tanpa skor.</p>`:''}
+ ${S_('Peta')?`<h3>Peta</h3><div class="map" id="mapRep" style="height:380px;border-radius:12px">${mapSVG('mapRep',{layers:{eq:1,ts:1,liq:1,ls:1,fault:1},free:true})}</div>`:''}
+ ${S_('Kejadian bahaya')?`<h3>Kejadian bahaya</h3>${tbl(['Waktu','Bahaya','Lokasi','Nilai','Sumber'],rows.filter(x=>x.hz==='Gempa'&&x.src==='USGS').slice(0,1).map(x=>[x.t.slice(0,16).replace('T',' ')+' WIB',x.hz,x.loc,x.v+' '+x.u,x.src+' '+'(DOCUMENTED)']))}`:''}
+ ${S_('Peringatan')?`<h3>Peringatan</h3>${tbl(['Waktu (WIB)','Bahaya','Tingkat','Lokasi','Sumber'],WARN.filter(w=>(!r.hz||w.hz===r.hz)).map(w=>[STEPS[w.from].t,w.hz,w.sev,w.loc,w.src+' (RECONSTRUCTED)']))}`:''}
+ ${S_('Data sensor')?`<h3>Data sensor (SIMULATED)</h3>${tbl(['Stasiun','Wilayah','Nilai 20:00 WIB','Status'],SENS.filter(s=>(!r.reg||s.kab===r.reg)).map(s=>[s.id,s.kab,s.offline?'—':fmt(s.kind,val(s.kind,178,true,s.o,s.f))+' '+s.unit,sStat(s,178)]))}`:''}
+ ${S_('Zona risiko')?`<h3>Zona risiko</h3>${tbl(['Zona','Bahaya','Risiko','Wilayah'],[...LIQ.map(x=>[x.n,'Likuifaksi',x.risk,x.kab]),...LSL.map(x=>[x.id,'Longsor',x.risk,x.kab])].filter(x=>!r.reg||x[3]===r.reg))}<small>Zona demo bersifat skematik; lokasi terdokumentasi berkoordinat perkiraan.</small>`:''}
+ ${S_('Timeline respons pemerintah')?`<h3>Timeline respons pemerintah</h3><p>${PHASES.map(p=>p+' ('+GOV.filter(g=>g.phase===p).length+')').join(' → ')}. Seluruh aktivitas belum diverifikasi bukti.</p>`:''}
+ ${S_('Catatan evaluasi')?`<h3>Catatan evaluasi</h3><p>Tidak ada skor kinerja. Kekuatan/kelemahan hanya dapat disimpulkan setelah bukti dokumen ditautkan pada register.</p>`:''}
+ ${S_('Sumber')?`<h3>Sumber</h3>${tbl(['Sumber','URL','Dataset','Simulasi'],SRC.map(s=>[s[0],esc(s[1]),s[2],s[3]?'Ya':'Tidak']))}`:''}</div>${footer()}`;
+}
+function pPengaturan(){
+ return `<h2 class="pt">Pengaturan</h2>
+ <div class="twocol"><div class="card pad"><h4 style="margin:0 0 8px">Tampilan & mode</h4><div class="frm"><label>Mode<span class="seg"><button class="${R()?'on':''}" data-a="mode" data-v="replay">Historical Replay</button><button class="${!R()?'on':''}" data-a="mode" data-v="live">Live Monitoring</button></span></label><label>Tema<span class="seg">${['auto','light','dark'].map(t=>`<button class="${S.theme===t?'on':''}" data-a="theme" data-v="${t}">${t}</button>`).join('')}</span></label></div><p style="font-size:12px;color:var(--mut)">Ambang deteksi diatur di halaman Peringatan Dini.</p></div>
+ <div class="card pad"><h4 style="margin:0 0 8px">Status feed live (BMKG)</h4><p>${S.live.state==='loading'?'<span class="spin"></span> Mencoba…':S.live.state==='ok'?chip('TERSAMBUNG','lv-grn'):chip('TIDAK TERSAMBUNG — fallback data demo','lv-org')}</p><p style="font-size:12px;color:var(--mut)">${S.live.state==='error'?'Halaman terpublikasi tidak boleh memanggil situs lain; kegagalan ini normal dan prototipe jatuh ke data demo ('+esc(S.live.msg||'')+'). Di server sendiri, proxy API BMKG lewat backend.':''}</p><button class="btn sm" data-a="retry">Coba lagi</button></div></div>
+ <div class="card" style="margin-top:14px"><div class="ch"><h3>Registri sumber data & provenance</h3></div>${tbl(['Sumber','URL','Dataset','retrieved_at','is_simulated'],SRC.map(s=>[s[0],s[1].startsWith('http')?`<a href="${s[1]}" target="_blank" rel="noopener">${s[1]}</a>`:s[1],s[2],'belum diambil (seed lokal)',s[3]?bd('sim'):'false']))}</div>
+ <div class="card pad" style="margin-top:14px"><h4 style="margin:0 0 6px">Kebijakan label data</h4><p style="margin:0">${bd('off')} ${bd('doc')} ${bd('rt')} ${bd('sim')} ${bd('rec')}</p><p style="font-size:12px;color:var(--mut)">Setiap visual harus membedakan data terdokumentasi, real-time, simulasi, dan rekonstruksi. Skor kinerja pemerintah, ambang operasional, pengamatan sensor, pengukuran tsunami/deformasi, dan waktu evakuasi tidak dikarang tanpa sumber.</p></div>${footer()}`;
+}
+const PG={beranda:pBeranda,peta:pPeta,peringatan:pPeringatan,sensor:pSensor,insar:pInsar,analitik:pAnalitik,evaluasi:pEvaluasi,laporan:pLaporan,pengaturan:pPengaturan,replay:pReplay};
+
+/* ================= render ================= */
+function render(){
+ const app=$('#app'),y=window.scrollY;
+ document.documentElement.dataset.theme=S.theme==='auto'?'':S.theme;
+ if(S.theme==='auto')delete document.documentElement.dataset.theme;
+ app.className=S.pm?'pm':'';
+ if(!S.ready){app.innerHTML=`<div style="display:grid;place-items:center;height:80vh;gap:10px;text-align:center"><div><span class="spin"></span><p>Memuat data demo EWS SULTENG…</p></div></div>`;return;}
+ let inner;
+ try{Object.keys(FE).forEach(k=>delete FE[k]);inner=PG[S.page]();}
+ catch(e){inner=`<div class="card"><div class="err"><b>Terjadi kesalahan saat menampilkan halaman.</b><br>${esc(e.message)}<br><button class="btn sm" data-a="nav" data-v="beranda">Kembali ke Beranda</button></div></div>`;console.error(e);}
+ app.innerHTML=shell(inner);
+ if(S.page==='insar')drawInsar();
+ window.scrollTo(0,y);
+}
+let TMR=null;
+function setPlay(){clearInterval(TMR);if(S.playing)TMR=setInterval(()=>{if(S.step<8){S.step++;}else{S.playing=false;clearInterval(TMR);}render();},{1:2500,2:1250,5:500}[S.speed]);}
+async function tryLive(){
+ S.live={state:'loading'};if(S.ready)render();
+ try{const c=new AbortController(),t=setTimeout(()=>c.abort(),5000);const r=await fetch('https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json',{signal:c.signal});clearTimeout(t);if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();S.live={state:'ok',g:j.Infogempa.gempa};}
+ catch(e){S.live={state:'error',msg:String(e&&e.message||e)};}
+ render();
+}
+function route(){const p=(location.hash.replace('#/','')||'beranda');S.page=PAGES[p]?p:'beranda';S.nav=false;S.bell=false;render();}
+function dl(text,name){return `<p style="font-size:12px;color:var(--mut)">Unduhan file dinonaktifkan di halaman terpublikasi. Salin teks berikut dan simpan sebagai <b>${name}</b>.</p><textarea id="expta" readonly aria-label="Isi ekspor">${esc(text)}</textarea><div style="margin-top:8px"><button class="btn pri" data-a="copy">Salin</button></div>`;}
+
+/* ================= events ================= */
+const A={
+ nav:v=>{location.hash='#/'+v;},
+ navtoggle:()=>{S.nav=!S.nav;render();},
+ bell:()=>{S.bell=!S.bell;render();},
+ modetoggle:()=>{S.mode=R()?'live':'replay';S.playing=false;setPlay();render();},
+ mode:v=>{S.mode=v;S.playing=false;setPlay();S.rangeI=0;render();},
+ pm:()=>{S.pm=!S.pm;if(S.pm){S.nav=false;if(S.page!=='beranda')location.hash='#/beranda';}render();},
+ step:v=>{S.step=+v;render();},
+ prev:()=>{S.step=Math.max(0,S.step-1);render();},
+ next:()=>{S.step=Math.min(8,S.step+1);render();},
+ reset:()=>{S.step=0;S.playing=false;setPlay();render();},
+ play:()=>{if(!S.playing&&S.step>=8)S.step=0;S.playing=!S.playing;setPlay();render();},
+ speed:v=>{S.speed=+v;setPlay();render();},
+ tab:v=>{S.tab=v;render();},
+ range:v=>{S.rangeI=+v;render();},
+ lm:()=>{S.lm=!S.lm;render();},
+ mz:(v,el)=>{const id=el.dataset.id,m=MV[id];const cx=m.x+m.w/2,cy=m.y+m.w*ASP/2;m.w=Math.max(150,Math.min(1400,v==='in'?m.w*.72:m.w/.72));m.x=cx-m.w/2;m.y=cy-m.w*ASP/2;render();},
+ mreset:(v,el)=>{delete MV[el.dataset.id];render();},
+ mloc:(v,el)=>{const id=el.dataset.id,[x,y]=P(119.87,-0.9);MV[id]={x:x-150,y:y-165,w:300};render();},
+ popclose:()=>{$$('.pop').forEach(p=>p.hidden=true);},
+ rtab:v=>{S.riskTab=v;render();},
+ fltreset:()=>{S.flt={kab:'',kec:'',risk:''};render();},
+ sel:v=>{S.sel=v;render();},
+ selkind:v=>{S.sel=v;render();},
+ bdetail:()=>{const b=binfo(),st=STEPS[S.step];modal(b.t,`${R()?`<p><b>HISTORICAL EVENT — 28 SEPTEMBER 2018</b> ${bd('rec')} Ini bukan peringatan aktif.</p>`:''}${tbl(['Atribut','Nilai'],b.rows.map(r=>[r[0],esc(r[1])]))}<p><b>Catatan sumber:</b> ${st.note}</p><p><b>Tindakan pengambil keputusan (skenario):</b> ${st.act}</p>`);},
+ guide:()=>{modal('Panduan & Edukasi',`<ul><li>Saat gempa kuat: lindungi kepala, berlindung di bawah meja kokoh, jauhi kaca.</li><li>Di pesisir, jika guncangan kuat atau lama, segera menuju tempat tinggi tanpa menunggu sirene.</li><li>Jauhi lereng curam dan tanah lunak/jenuh air setelah gempa (risiko longsor dan likuifaksi).</li><li>Ikuti informasi dari kanal resmi (BMKG, BNPB, BPBD); jangan menyebarkan kabar yang belum terverifikasi.</li></ul><p style="font-size:12px;color:var(--mut)">Panduan umum untuk keperluan edukasi prototipe ini.</p>`);},
+ mclose:()=>{$('#modal').hidden=true;},
+ threset:()=>{S.th={...TH0};render();},
+ theme:v=>{S.theme=v;render();},
+ retry:()=>tryLive(),
+ pg:v=>{S.an.pg=Math.max(0,S.an.pg+ +v);render();},
+ anreset:()=>{S.an={hz:'',reg:'',src:'',st:'',rs:'',date:'2018-09-28',pg:0};render();},
+ view:v=>{const r=filtRows(S.an)[+v];if(!r)return;modal('Detail catatan',tbl(['Field','Nilai'],[['timestamp',r.t],['hazard',r.hz],['location',esc(r.loc)],['value',r.v+' '+r.u],['source',esc(r.src)],['source_url',esc(r.url)],['retrieved_at','seed-lokal'],['dataset_name',r.ds],['status',r.st],['dataQuality',r.q],['is_simulated',String(r.sim)]]));},
+ export:v=>{const [f,w]=v.split('|'),rows=filtRows(w==='rep'?S.rep:S.an);modal('Export '+f.toUpperCase(),dl(f==='csv'?toCSV(rows):toJSON(rows),'ews-sulteng.'+f));},
+ copy:()=>{const t=$('#expta');t.select();try{navigator.clipboard.writeText(t.value).catch(()=>document.execCommand('copy'));}catch(e){document.execCommand('copy');}},
+ gen:()=>{S.rep.done=true;render();},
+ print:()=>{try{window.print();}catch(e){modal('Print','<p>Cetak tidak tersedia di jendela ini. Gunakan Ctrl/Cmd+P pada browser.</p>');}}
+};
+document.addEventListener('click',e=>{
+ const el=e.target.closest('[data-a]');
+ if(el){A[el.dataset.a]&&A[el.dataset.a](el.dataset.v,el);return;}
+ const f=e.target.closest('[data-f]');
+ if(f){if(window._pm&&Date.now()-window._pm<60)return;const mp=f.closest('.map'),o=FE[f.dataset.f];if(!o)return;const pop=$('.pop',mp);if(!pop)return;
+  pop.innerHTML=`<button class="ibtn" style="position:absolute;right:6px;top:6px;width:26px;height:26px" data-a="popclose" aria-label="Tutup">${ic('x',12)}</button><h5>${esc(o.title)}</h5><dl><dt>Lokasi</dt><dd>${esc(o.loc)}</dd><dt>Bahaya</dt><dd>${esc(o.hz)}</dd><dt>Level risiko</dt><dd>${esc(o.risk)}</dd><dt>Nilai terakhir</dt><dd>${esc(o.val)}</dd><dt>Waktu</dt><dd>${esc(o.time)}</dd><dt>Sumber</dt><dd>${esc(o.src)}</dd><dt>Status data</dt><dd>${bd(o.bd)}</dd></dl>${o.sid?`<button class="btn sm" style="margin-top:8px" data-a="sel" data-v="${o.sid}">Lihat detail sensor</button>`:''}`;
+  pop.hidden=false;return;}
+ if(!e.target.closest('.search'))$('#sres')&&($('#sres').hidden=true);
+ if(e.target.id==='modal')A.mclose();
 });
-function pin(z){return L.divIcon({className:'',html:`<div class="pin" style="--c:${LV[z.l][1]}"><i></i></div>`,iconSize:[22,22],iconAnchor:[11,11]})}
-
-/* UI */
-function paint(){
- Z.forEach(z=>{z.circle.setStyle({color:LV[z.l][1],fillColor:LV[z.l][1]});z.mk.setIcon(pin(z))});
- $('#zl').innerHTML=Z.map(z=>`<div class="card zc ${z.i==cur?'sel':''}" onclick="sel(${z.i})"><div><b>${z.n}</b><br><small>${z.def.toFixed(1)} mm • MAT ${z.gw} m</small></div><span class="badge" style="background:${LV[z.l][1]}">${LV[z.l][0]}</span></div>`).join('');
- $('#k1').textContent=Math.max(...Z.map(z=>z.def)).toFixed(1);
- $('#k3').textContent=Z.filter(z=>z.l>=2).length;
- detail();chart()}
-function detail(){const z=Z[cur];$('#dz').textContent='Detail zona • '+z.n;
- $('#dd').innerHTML=`<span class="badge" style="background:${LV[z.l][1]}">${LV[z.l][0]}</span><table style="width:100%;margin-top:6px;border-collapse:collapse">
- <tr><td style="color:var(--mut)">Deformasi InSAR</td><td align=right><b>${z.def.toFixed(1)} mm</b></td></tr>
- <tr><td style="color:var(--mut)">Muka air tanah</td><td align=right><b>${z.gw} m</b></td></tr>
- <tr><td style="color:var(--mut)">Jenis tanah</td><td align=right><b>${z.soil}</b></td></tr></table>`}
-function chart(){const z=Z[cur],mx=32,n=z.s.length,X=i=>14+i*(256/(n-1)),Y=v=>104-Math.min(v,mx)/mx*92;
- const th=(v,c,t)=>`<line x1="14" x2="270" y1="${Y(v)}" y2="${Y(v)}" stroke="${c}" stroke-dasharray="4"/><text x="16" y="${Y(v)-3}" font-size="8" fill="${c}">${t} ${v} mm</text>`;
- $('#ch').innerHTML=`<line x1="14" x2="270" y1="104" y2="104" stroke="#22345f"/>${th(10,'#facc15','Waspada')}${th(15,'#fb923c','Siaga')}${th(22,'#ef4444','Awas')}
- <polyline fill="none" stroke="#22d3ee" stroke-width="2.5" points="${z.s.map((v,i)=>X(i)+','+Y(v)).join(' ')}"/><circle cx="${X(n-1)}" cy="${Y(z.s[n-1])}" r="3.5" fill="#22d3ee"/><text x="14" y="117" font-size="8" fill="#8ea0c6">Time series deformasi (live)</text>`}
-function sel(i){cur=i;paint();map.flyTo(Z[i].ll,13,{duration:1.2})}
-function log(t,c){const d=document.createElement('div');d.innerHTML=`<time>${new Date().toLocaleTimeString('id-ID')}</time><span style="color:${c||'inherit'}">${t}</span>`;$('#log').prepend(d);if($('#log').children.length>40)$('#log').lastChild.remove()}
-const S=['Akuisisi Data','Integrasi Data','Pengolahan & Analisis','Diseminasi & Keputusan','Tindak Lanjut'];
-function pipe(a){$('#pipe').innerHTML=S.map((s,i)=>`<div class="st ${i==a?'on':i<a?'done':''}"><i>${i<a?'✓':i+1}</i><b>${s}</b></div>`).join('')}
-setInterval(()=>{$('#clock').textContent=new Date().toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'medium'})},1000);
-
-/* data live */
-let on=6;
-setInterval(()=>{ if(demoOn)return;
- Z.forEach(z=>{z.def=Math.max(0.5,z.def+(Math.random()-.5)*.4);z.s.push(+z.def.toFixed(1));z.s.shift()});
- on=5+Math.round(Math.random());$('#k2').textContent=on+'/6';paint()},3000);
-const feed=['GNSS CORS: baseline stabil','Sentinel-1: akuisisi baru diproses','IoT MAT: pembacaan diterima','Curah hujan: data 10 menit masuk'];
-setInterval(()=>{if(!demoOn)log(feed[Math.floor(Math.random()*4)]+' – '+Z[Math.floor(Math.random()*4)].n,'#8ea0c6')},4500);
-
-/* demo */
-function setL(i,l,d){const z=Z[i];z.l=l;if(d){z.def=d;z.s.push(d);z.s.shift()}}
-function after(ms,f){timers.push(setTimeout(f,ms))}
-function reset(){timers.forEach(clearTimeout);timers=[];demoOn=false;$('#ov').style.display=$('#ovt').style.display='none';
- Z.forEach(z=>{z.l=z.o[0];z.def=z.o[1];z.s=Array.from({length:12},(_,k)=>+(z.def*Math.pow((k+1)/12,1.7)).toFixed(1))});
- $('#msg').textContent='Belum ada peringatan.';$('#msg').style.borderColor='#22d3ee';pipe(-1);
- $('#demo').textContent='▶ Mode Demo';$('#demo').className='btn go';paint()}
-$('#demo').onclick=()=>{
- if(demoOn){reset();return}
- reset();demoOn=true;$('#demo').textContent='■ Hentikan & Reset';$('#demo').className='btn stop';
- sel(0);pipe(0);log('<b>Akuisisi:</b> Sentinel-1 (InSAR), GNSS realtime, IoT muka air tanah, hujan & debit irigasi diterima','#22d3ee');
- after(3500,()=>{pipe(1);log('<b>Integrasi:</b> GNSS via Jaringan CORS BIG/ATR BPN; data lain ke Pusat Data Terpadu (cloud)','#22d3ee')});
- after(7000,()=>{pipe(2);setL(0,2,16.2);paint();log('<b>Analisis:</b> InSAR time series & baseline GNSS – anomali di Petobo, muka air tanah dangkal','#fb923c')});
- after(10500,()=>{setL(0,3,24.6);setL(2,2,18.1);paint();log('<b>Algoritma anomali:</b> ambang displacement Petobo TERLAMPAUI','#ef4444')});
- after(13000,()=>{pipe(3);paint();$('#ov').style.display='block';$('#ovs').textContent='Petobo • Dashboard EWS memicu peringatan dini';$('#ovt').style.display='block';
-  $('#msg').textContent=MSG[3].replace('{z}','Petobo');$('#msg').style.borderColor='#ef4444';
-  log('<b>Diseminasi:</b> sirine, SMS/WA blast, dan aplikasi dikirim ke warga & BPBD','#ef4444')});
- after(18000,()=>{pipe(4);$('#ov').style.display=$('#ovt').style.display='none';
-  log('<b>Tindak lanjut:</b> evakuasi warga, evaluasi zonasi rawan bencana & kebijakan jaringan irigasi','#22c55e');
-  after(3500,()=>{pipe(5);log('Simulasi selesai. Tekan "Hentikan & Reset" untuk mengulang.','#8ea0c6')})})};
-pipe(-1);paint();log('Sistem siap. Klik zona atau tekan Mode Demo.','#22d3ee');
+document.addEventListener('change',e=>{
+ const t=e.target;
+ if(t.dataset.layer){S.layers[t.dataset.layer]=t.checked?1:0;render();}
+ else if(t.dataset.th){const v=parseFloat(t.value);if(!isNaN(v)){S.th[t.dataset.th]=v;}render();}
+ else if(t.dataset.flt){S.flt[t.dataset.flt]=t.value;if(t.dataset.flt==='kab')S.flt.kec='';render();}
+ else if(t.dataset.rt){S.riskTab=t.value;render();}
+ else if(t.dataset.rx){S.rx[t.dataset.rx]=t.checked?1:0;render();}
+ else if(t.dataset.admin){S.admin=t.checked;render();}
+ else if(t.dataset.an){S.an[t.dataset.an]=t.value;S.an.pg=0;render();}
+ else if(t.dataset.rep){S.rep[t.dataset.rep]=t.value;}
+ else if(t.dataset.repsec){S.rep.sec[t.dataset.repsec]=t.checked;}
+});
+document.addEventListener('input',e=>{
+ if(e.target.id!=='q')return;
+ const q=e.target.value.trim().toLowerCase(),box=$('#sres');
+ if(!q){box.hidden=true;return;}
+ const res=[];
+ NAV.forEach(([k,l])=>{if(l.toLowerCase().includes(q))res.push([l+' (halaman)',`nav|${k}`]);});
+ if('historical replay'.includes(q))res.push(['Historical Replay (halaman)','nav|replay']);
+ SENS.forEach(s=>{if(s.id.toLowerCase().includes(q)||s.kab.toLowerCase().includes(q))res.push([s.id+' — '+s.kab,`sel|${s.id}`]);});
+ WARN.forEach(w=>{if(w.hz.toLowerCase().includes(q))res.push(['Peringatan '+w.hz,'nav|peringatan']);});
+ box.innerHTML=res.length?res.slice(0,7).map(r=>`<button data-a="${r[1].split('|')[0]==='sel'?'searchsel':'nav'}" data-v="${r[1].split('|')[1]}">${esc(r[0])}</button>`).join(''):'<div class="empty">Tidak ditemukan.</div>';
+ box.hidden=false;
+});
+A.searchsel=v=>{S.sel=v;location.hash='#/sensor';render();};
+/* pan & tooltip */
+let pan=null,lastCh=null;
+document.addEventListener('pointerdown',e=>{const mp=e.target.closest('.map');if(!mp||e.target.closest('.mctrl,.pop,.lmenu,.legend'))return;const v=MV[mp.id];if(!v)return;pan={id:mp.id,x:e.clientX,y:e.clientY,vx:v.x,vy:v.y,moved:false};});
+document.addEventListener('pointermove',e=>{
+ if(pan){const mp=document.getElementById(pan.id);if(mp){const v=MV[pan.id],svg=$('svg',mp),r=svg.getBoundingClientRect(),sc=Math.min(r.width/v.w,r.height/(v.w*ASP)),dx=e.clientX-pan.x,dy=e.clientY-pan.y;if(Math.abs(dx)+Math.abs(dy)>4)pan.moved=true;if(pan.moved){v.x=pan.vx-dx/sc;v.y=pan.vy-dy/sc;svg.setAttribute('viewBox',`${v.x} ${v.y} ${v.w} ${v.w*ASP}`);}}}
+ const ch=e.target.closest&&e.target.closest('.chart');
+ if(lastCh&&lastCh!==ch){$('.tt',lastCh)&&($('.tt',lastCh).hidden=true);const x=$('.xh',lastCh);x&&(x.style.display='none');lastCh=null;}
+ if(!ch)return;const d=CH[ch.dataset.c];if(!d)return;
+ const svg=$('svg',ch),r=svg.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*d.W,n=d.c.pts.length;
+ let i=Math.round((x-d.L)/(d.W-d.L-d.R)*(n-1));i=Math.max(0,Math.min(n-1,i));const p=d.c.pts[i];
+ const xh=$('.xh',ch);xh.setAttribute('x1',d.X(i));xh.setAttribute('x2',d.X(i));xh.style.display='';
+ const tt=$('.tt',ch);tt.hidden=false;tt.style.left=Math.min(80,Math.max(6,d.X(i)/d.W*100))+'%';
+ tt.innerHTML=`<b>${esc(p.lab)}</b> · ${p.v.toFixed(d.c.dec)} ${esc(d.c.unit)}${d.c.an(p.v)?' · <span style="color:#ff8b7f">anomali</span>':''}`;lastCh=ch;
+});
+document.addEventListener('pointerup',()=>{if(pan&&pan.moved)window._pm=Date.now();pan=null;});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){if(!$('#modal').hidden)A.mclose();else if(S.pm){S.pm=false;render();}return;}
+ if(/INPUT|SELECT|TEXTAREA/.test((e.target.tagName||'')))return;
+ if((S.page==='beranda'||S.page==='replay'||S.page==='peringatan'||S.page==='sensor')&&R()){if(e.key==='ArrowRight')A.next();if(e.key==='ArrowLeft')A.prev();}
+});
+window.addEventListener('hashchange',route);
+render();
+setTimeout(()=>{S.ready=true;route();tryLive();},650);
 </script>
 </body>
 </html>
